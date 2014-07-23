@@ -1,1 +1,13 @@
 /* CSS declarations go here */
+
+.question-block {
+    width: 50%;
+    height: 416px;
+    overflow: auto;
+}
+
+.question-block > .question{
+    border: 1px solid #808080;
+    padding: 1%;
+    margin: 1% 0 1% 0;
+}

@@ -1,5 +1,7 @@
 Games = new Meteor.Collection('games');
 GameConfigs = new Meteor.Collection('gameConfigs');
+questionBanks = new Meteor.Collection('questionBanks');
+
 
 if (Meteor.isClient) {
     var dynamicFieldCount = 0;
@@ -44,10 +46,27 @@ if (Meteor.isClient) {
                 }
             });
 
+            this.route('upload_questions',{
+                path: "/upload_questions",
+                template: "uploadQuestions"
+            });
+
+            this.route('question_banks_list',{
+                path: "/question_banks_list",
+                template: "question_banks_list"
+            });
+
+            this.route('questionBankShow', {
+                // matches: '/posts/1'
+                path: '/question_bank/:_id',
+                template: "questionBank",
+                data: function() { return questionBanks.findOne(this.params._id); }
+            });
+
         });
     });
 
-  Template.welcome.greeting = function () {
+    Template.welcome.greeting = function () {
     return "Welcome to neti app.";
   };
 
@@ -147,6 +166,39 @@ if (Meteor.isClient) {
             Router.go('/show_game_config/'+game_id);
         }
     });
+
+    Template.uploadQuestions.events({
+        'submit form': function (event, template) {
+            event.preventDefault();
+            question_bank_name = $(event.currentTarget).find("#question_bank_name").val();
+            listOfQuestions =  $(event.currentTarget).find("#list_of_questions").val();
+            console.log("textarea val (listOfQuestions) :- " + listOfQuestions);
+            questionlist = JSON.parse(listOfQuestions);
+
+            //console.log("questionlist len :- " + questionlist.length);
+            //$.each(questionlist, function( index, value ) {
+                //console.log("name :- " + questionlist[index].name + ", opta :- " + questionlist[index].opta);
+            //});
+            questionBanks.insert({name:question_bank_name,questions:questionlist})
+
+        }
+    });
+
+    Template.question_banks_list.questionBanks = function () {
+        return questionBanks.find().fetch();
+    };
+
+    Template.questionBank.helpers({
+        rsvpButtonTemplate: function(rsvp) {
+            switch(rsvp){
+                case 'yes':   return Template.buttonYes;
+                case 'maybe': return Template.buttonMaybe;
+                case 'no':    return Template.buttonNo;
+                case 'none':  return Template.buttonNone;
+            }
+        }
+    });
+
 }
 
 if (Meteor.isServer) {

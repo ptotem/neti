@@ -77,3 +77,78 @@
     </div>
     {{/each}}
 </template>
+
+<template name="uploadQuestions">
+    <h1>Upload questions here</h1>
+    <form id="question_upload_form" method="post">
+        <label for="question_bank_name">Question Bank Name :- </label>
+        <input type="text" name="question_bank_name" id="question_bank_name"> <br><br><br>
+        <label for="list_of_questions">List of questions :- </label> <br>
+        <textarea name="list_of_questions" id="list_of_questions" cols=60 rows=10></textarea>
+        <br>
+        <input type="submit" id="submit_questions_btn"/>
+    </form>
+</template>
+
+<template name="question_banks_list">
+    List of Question Bank :- <br>
+    <div class="qb-block">
+        {{#each questionBanks}}
+        <div id="qb_{{_id}}" class="question-bank">
+            <a href="/question_bank/{{_id}}">{{name}}</a>
+        </div>
+        {{/each}}
+    </div>
+</template>
+
+<template name="questionBank">
+    <h1>Question Bank :- {{name}}</h1>
+
+    <div class="question-block">
+        {{#each questions}}
+        <div class="question">
+            {{name}}
+            <div class="options-block">
+                {{correct}}, {{correct_answer}}
+
+                <!--{{> rsvpButtonTemplate}}-->
+
+                <ul>
+                    {{#if correct "opta"}}
+                        <li class="correct" style="color: green">{{opta}}</li>
+                        <li>{{optb}}</li>
+                        <li>{{optc}}</li>
+                        <li>{{optd}}</li>
+                    {{/if}}
+
+                    <!--{{#if correct "optb"}}-->
+                        <!--<li class="correct">{{optb}}</li>-->
+                    <!--{{/if}}-->
+
+                    <!--{{#if correct "optc"}}-->
+                        <!--<li class="correct">{{optc}}</li>-->
+                    <!--{{/if}}-->
+
+                    <!--{{#if correct "optd"}}-->
+                        <!--<li class="correct">{{optd}}</li>-->
+                    <!--{{/if}}-->
+
+                </ul>
+            </div>
+
+        </div>
+        {{/each}}
+    </div>
+</template>
+
+<template name="rsvpButtonTemplate">
+    rsvpButtonTemplate
+</template>
+
+<template name="buttonYes">
+    <div class="correct">a</div>
+</template>
+
+<template name="buttonMaybe">
+    <div class="correct">a</div>
+</template>
