@@ -110,28 +110,35 @@
             {{name}}
             <div class="options-block">
                 {{correct}}, {{correct_answer}}
-
-                <!--{{> rsvpButtonTemplate}}-->
-
                 <ul>
-                    {{#if correct "opta"}}
-                        <li class="correct" style="color: green">{{opta}}</li>
-                        <li>{{optb}}</li>
-                        <li>{{optc}}</li>
-                        <li>{{optd}}</li>
+
+                    {{#if correctOptionIs "opta"}}
+                        <li class="correct">{{opta}}</li>
+                        <li class="other">{{optb}}</li>
+                        <li class="other">{{optc}}</li>
+                        <li class="other">{{optd}}</li>
                     {{/if}}
 
-                    <!--{{#if correct "optb"}}-->
-                        <!--<li class="correct">{{optb}}</li>-->
-                    <!--{{/if}}-->
+                    {{#if correctOptionIs "optb"}}
+                        <li class="other">{{opta}}</li>
+                        <li class="correct">{{optb}}</li>
+                        <li class="other">{{optc}}</li>
+                        <li class="other">{{optd}}</li>
+                    {{/if}}
 
-                    <!--{{#if correct "optc"}}-->
-                        <!--<li class="correct">{{optc}}</li>-->
-                    <!--{{/if}}-->
+                    {{#if correctOptionIs "optc"}}
+                        <li class="other">{{opta}}</li>
+                        <li class="other">{{optb}}</li>
+                        <li class="correct">{{optc}}</li>
+                        <li class="other">{{optd}}</li>
+                    {{/if}}
 
-                    <!--{{#if correct "optd"}}-->
-                        <!--<li class="correct">{{optd}}</li>-->
-                    <!--{{/if}}-->
+                    {{#if correctOptionIs "optd"}}
+                        <li class="other">{{opta}}</li>
+                        <li class="other">{{optb}}</li>
+                        <li class="other">{{optc}}</li>
+                        <li class="correct">{{optd}}</li>
+                    {{/if}}
 
                 </ul>
             </div>
@@ -141,14 +148,103 @@
     </div>
 </template>
 
-<template name="rsvpButtonTemplate">
-    rsvpButtonTemplate
+<template name="uploadQuestionsDynamic">
+    <h1>Upload questions here</h1>
+    <form id="question_upload_dynamic_form" method="post">
+        <label for="question_bank_name">Question Bank Name :- </label>
+        <input type="text" name="question_bank_name_dynamic" id="question_bank_name_dynamic"> <br><br><br>
+
+        <label for="dynamic_question_name">Question :- </label>
+        <input type="text" name="dynamic_question_name" id="dynamic_question_name"> <br><br><br>
+
+        <label for="dynamic_correct_option_key">Correct Option Key :- </label>
+        <input type="text" name="dynamic_correct_option_key" id="dynamic_correct_option_key"> <br><br><br>
+
+        <div id="add_options_btn" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Options</div>
+        <br><br>
+        <div id="dynamic_option_block"></div>
+        <br>
+
+        <br>
+        <input type="submit" id="submit_questions_btn_dynamic"/>
+    </form>
 </template>
 
-<template name="buttonYes">
-    <div class="correct">a</div>
+<template name="dynamicOptions">
+    <div class="dynamic_options">
+        <label for="dynamic_option_key_{{id}}">Key :- </label>
+        <input type="text" name="dynamic_config_key_{{id}}" id="dynamic_option_key_{{id}}">
+        <label for="dynamic_option_val_{{id}}">Value :- </label>
+        <input type="text" name="dynamic_option_val_{{id}}" id="dynamic_option_val_{{id}}">
+    </div>
 </template>
 
-<template name="buttonMaybe">
-    <div class="correct">a</div>
+<!--New Starts-->
+<template name="uploadQuestionsDynamicNew">
+    <h1>New Question Bank</h1>
+    <form id="question_upload_dynamic_form_new" method="post">
+        <label for="question_bank_name_new">Question Bank Name :- </label>
+        <input type="text" name="question_bank_name_new" id="question_bank_name_new"> <br><br><br>
+        <input type="submit" id="submit_questions_btn_dynamic_new"/>
+    </form>
 </template>
+
+<template name="showQBNew">
+    <h1>QB Name :- {{name}}</h1>
+    <form id="qb_new_form" method="post">
+        <input type="hidden" name="qb_id_new" value="{{_id}}">
+        <div id="add_question_new" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Question</div>
+        <br><br>
+        <div id="dynamic_question_block_new"></div>
+        <br>
+        <input type="submit" id="dynamic_question_submit_new"/>
+    </form>
+</template>
+
+<template name="dynamicQuestionNew">
+    <label for="dynamic_question_name_new">Question :- </label>
+    <input type="text" name="dynamic_question_name_new" id="dynamic_question_name_new"> <br><br><br>
+    <label for="dynamic_correct_option_new">Correct Option :- </label>
+    <input type="text" name="dynamic_correct_option_new" id="dynamic_correct_option_new"> <br><br><br>
+    <div id="add_options_new" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Option</div>
+    <br><br>
+    <div id="dynamic_options_block_new"></div>
+</template>
+
+<template name="dynamicOptionNew">
+    <div class="dynamic_options">
+        <label for="dynamic_option_new_val_{{id}}">Value :- </label>
+        <input type="text" name="dynamic_option_new_val_{{id}}" id="dynamic_option_new_val_{{id}}">
+    </div>
+</template>
+
+<template name="questionBank_new">
+    <h1>Question Bank :- {{name}}</h1>
+
+    <div class="question-block">
+        {{#each question}}
+        <div class="question">
+            {{name}}
+            <div class="options-block">
+                <!--{{correct_option}}-->
+                <br>
+                <!--{{#if correctOptionNewIs correct_option1}}-->
+                    <!--{{name}}-->
+                <!--{{/if}}-->
+
+                {{#each options}}
+                    <!--{{name}}-->
+                    <!--{{#if checkcorrectOptionNewIs correct_option2}}-->
+
+                        <li class="other">{{name}}</li>
+                    <!--{{/if}}-->
+
+                {{/each}}
+            </div>
+        </div>
+        {{/each}}
+
+    </div>
+
+</template>
+<!--New Ends-->
