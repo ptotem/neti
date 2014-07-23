@@ -1,0 +1,79 @@
+<head>
+  <title>neti_app</title>
+</head>
+
+<body>
+  <!--{{> hello}}-->
+</body>
+
+<template name="welcome">
+  <h1>{{greeting}}</h1>
+  <!--<input type="button" value="Click" />-->
+  {{> games_list}}
+  <hr>
+  <a href="/games/new">Create a New Game</a>
+</template>
+
+<template name="createNewGame">
+    <h1>Create a New Game</h1>
+    <form id="new_game_form" method="post">
+        <label for="game_name">Name</label>
+        <input type="text" name="game_name" id="game_name" />
+        <input type="submit" id="new_game_btn"/>
+        <!--<br>-->
+        <!--<div id="get_game_data_btn">Get Game Data</div>-->
+    </form>
+</template>
+
+<template name="games_list">
+    List of Games :- <br>
+    <div class="games-block">
+        {{#each games}}
+        <div id="{{_id}}" class="game">
+            <a href="/game/{{_id}}">{{name}}</a>
+        </div>
+        {{/each}}
+    </div>
+</template>
+
+<template name="game">
+    Game :- {{name}}
+    <hr>
+    <a href="/game_config/game/{{_id}}">Create Game Config</a>
+    <br>
+    <a href="/show_game_config/{{_id}}">Show Game Config</a>
+</template>
+
+<template name="gameConfigForm">
+    <h2>Game Config</h2>
+    <h3>{{name}}</h3>
+    <form id="game_config_form" method="post">
+        <input type="hidden" name="game_id" value="{{_id}}">
+        <label for="no_of_rounds">Number of Rounds :- </label>
+        <input type="text" name="no_of_rounds" id="no_of_rounds" value="{{fixedParameter.rounds}}">
+        <br><br>
+        <div id="add_config_btn" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Dynamic Field</div>
+        <br><br>
+        <div id="dynamic_config_block"></div>
+        <br>
+        <input type="submit" id="submit_game_config_btn"/>
+    </form>
+</template>
+
+<template name="dynamicParameterFields">
+    <div class="dynamic_fields">
+        <label for="dynamic_config_key_{{id}}">Key :- </label>
+        <input type="text" name="dynamic_config_key_{{id}}" id="dynamic_config_key_{{id}}">
+        <label for="dynamic_config_val_{{id}}">Value :- </label>
+        <input type="text" name="dynamic_config_val_{{id}}" id="dynamic_config_val_{{id}}">
+    </div>
+</template>
+
+<template name="showGameConfig">
+    <h1>Game Config :- {{name}}</h1>
+    {{#each dynamicParameter.dynamicFieldArray}}
+    <div class="key_value_pair">
+        <h3>Key :- {{key}}, Value :- {{value}}</h3>
+    </div>
+    {{/each}}
+</template>
