@@ -299,41 +299,81 @@ if (Meteor.isClient) {
     Template.showQBNew.events({
         'click #add_question_new': function(event, template){
             //console.log(dynamicFieldCount);
+            var counter=0;
             dynamicQuestion = UI.renderWithData(Template.dynamicQuestionNew,{id:dynamicQuestionCount});
+//            for(var i=0; i<counter;i++)
+//            {
             UI.insert(dynamicQuestion, $("#dynamic_question_block_new")[0]);
+//            }
+//            counter++;
             return dynamicQuestionCount = dynamicQuestionCount + 1;
+//            console.log(counter);
+//            return counter;
         },
 
         'submit form': function (event, template) {
             event.preventDefault();
             qb_id_new = template.find("input[name=qb_id_new]").value;
-            console.log("s "  + qb_id_new);
+            console.log("qb_id_new "  + qb_id_new);
 
             question_name_new = $(event.currentTarget).find("#dynamic_question_name_new").val();
-            dynamic_correct_option_new = $(event.currentTarget).find("#dynamic_correct_option_new").val();
             console.log("question_name_new :- " + question_name_new);
 
-            var optionsnewArray = [];
-            $('#dynamic_options_block_new').find("input[type=text]").each(function(df_index, df) {
-                //optionsnewArray.push($(df).val())
-                optionsnewArray.push({
-                    name : $(df).val()
-                });
+            var dynamicOptsVal = [];
+            var dynamicOptsisCorrect = [];
+            var dynamicOptsCombined = [];
+            var this_opt_val, this_opt_isCorrect;
+//            $('#dynamic_options_block_new').find("input:text").each(function(df_text_index, df_text){
+            $('#dynamic_options_block_new').find("input:text").each(function(df_text_index, df_text){
+//                console.log(df_text_index);
+                this_opt_val = $(df_text).val();
+                dynamicOptsVal.push({val:this_opt_val});
             });
-            console.log(optionsnewArray);
 
-            console.log("------ optionsnewArray ------");
-            $.each(optionsnewArray, function( index, value ) {
-                console.log("key :- " + optionsnewArray[index]);
+            $('#dynamic_options_block_new').find("input:radio").each(function(df_radio_index, df_radio){
+                console.log(df_radio_index);
+                this_opt_isCorrect = $(df_radio).val();
+                dynamicOptsisCorrect.push({isCorrect:this_opt_isCorrect});
+                //console.log(dynamicOptsisCorrect[df_radio_index]);
             });
+
+//            $('#dynamic_options_block_new').find("input:text, input:radio").each(function(df_radio_index, df_radio){
+//                //console.log($(df).attr('type'));
+//                //console.log("this id :- " + $(df).attr('id') + ", val :- " + $(df).val());
+////                if ( $(df).attr('type') == "text" ) {
+////                    this_opt_val = $(df).val();
+////                    dynamicOpts.push({val:this_opt_val});
+////                }
+////                else if ( $(df).attr('type') == "radio" ) {
+////                    this_opt_isCorrect = $(df).val();
+////                    dynamicOpts.push({isCorrect:this_opt_isCorrect});
+////                }
+//
+//            });
+
+            console.log("dynamicOptsVal.length :- " + dynamicOptsVal.length + ", dynamicOptsisCorrect.length :- " + dynamicOptsisCorrect.length);
+
+            for (var k=0; k<dynamicOptsVal.length; k++){
+                console.log("dynamicOptsVal :- " + dynamicOptsVal[k].val);
+                console.log("dynamicOptsisCorrect :- " + dynamicOptsisCorrect[k].isCorrect);
+
+                dynamicOptsCombined.push({val:dynamicOptsVal[k].val, isCorrect:dynamicOptsisCorrect[k].isCorrect})
+            }
+
+            console.log("dynamicOptsCombined.length :- " + dynamicOptsCombined.length);
+//
+            $.each(dynamicOptsCombined, function( index, value ) {
+                console.log("val :- " + value.val + ", isCorrect :- " + value.isCorrect);
+            });
+
 
             dynamicQuestionBanks.update( { _id: qb_id_new},
-                { $set: {
-                    question:[ {
+                { $push:
+                {
+                    question: {
                         name: question_name_new,
-                        correct_option: dynamic_correct_option_new,
-                        options: optionsnewArray
-                    }]
+                        options: dynamicOptsCombined
+                    }
                 }
                 }
             );
@@ -346,34 +386,65 @@ if (Meteor.isClient) {
             dynamicOptionNew = UI.renderWithData(Template.dynamicOptionNew,{id:dynamicOptionCountNew});
             UI.insert(dynamicOptionNew, $("#dynamic_options_block_new")[0]);
             return dynamicOptionCountNew = dynamicOptionCountNew + 1;
+
+        },
+
+        'change .option-class': function(event, template){
+            if ( $(event.currentTarget).is(':checked') ){
+
+                $('#dynamic_options_block_new').find("input[type=radio]").each(function(df_index, df){
+                    $(df).removeAttr('checked');
+                    $(df).val('false');
+                });
+                $(event.currentTarget).prop('checked', true);
+                $(event.currentTarget).val('true');
+            }
+
         }
     });
 
-    Template.questionBank_new.correctOptionNewIs = function (correctOptionNewIs) {
-        //console.log("correct option " + this.correct_option + ", options :- " + this.options.length);
-
-        for(var i=0; i<this.options.length; i++){
-            //console.log("this.correct_option :- " + this.correct_option);
-            //console.log("this.options[i] :- " + this.options[i].name);
-
-            if (this.correct_option==this.options[i].name){
-                correct_option1 = this.options[i].name
-            }
+    Template.dynamicQuestionNew.events({
+        'click .remove-opt-btn': function(event, template){
+            $(event.currentTarget).parent().remove();
         }
-        console.log("correct_option1 :- " + correct_option1);
-        return correct_option1;
-        //return this.name === correctOptionNewIs;
-    };
+    });
 
-    Template.questionBank_new.checkcorrectOptionNewIs = function (checkcorrectOptionNewIs) {
-        //console.log("option " + this.name);
-        //console.log("correct_option " + correct_option1);
 
-        if (this.name == correct_option1){
-            correct_option2 = this.name;
+    Template.questionBank_new.events = {
+        'click input.delete': function (event, template) { // <-- here it is
+            var opt_to_remove = $(event.currentTarget).prev().text();
+            show_qb_id = template.find("input[name=show_game_id]").value;
+            console.log(show_qb_id);
+            var quest_name = $(event.currentTarget).parent().parent().parent().prev().text();
+            console.log(quest_name);
+            console.log(opt_to_remove);
+
+
+            dynamicQuestionBanks.update({ _id: show_qb_id },
+                {"$pull":{ question:
+                {
+                    name: quest_name,
+                    options: [
+                        { $val : opt_to_remove }
+                    ] } }},
+                { $unset: {
+                    val: "",
+                    isCorrect: ""
+                }
+                },
+                { multi: true }
+
+            );
+
+            //dynamicQuestionBanks.update({_id: show_qb_id},{question:{name:quest_name},options:[ {$pull:{"val":opt_to_remove}}]});
+
+
+
+
+
+
+            //dynamicQuestionBanks.remove(this._id);
         }
-        console.log("correct_option2 :- " + correct_option2);
-        return correct_option2;
     };
 
 

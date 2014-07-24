@@ -195,51 +195,53 @@
         <input type="hidden" name="qb_id_new" value="{{_id}}">
         <div id="add_question_new" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Question</div>
         <br><br>
-        <div id="dynamic_question_block_new"></div>
+        <div id="dynamic_question_block_new" style="border: 1px solid red"></div>
+        <!--<div id="dynamic_options_block_new" style="border: 1px solid blueviolet"></div>-->
+        <div id="dyna_option"></div>
         <br>
+        <!--<div id="dynamic_options_block_new1"></div>-->
+
         <input type="submit" id="dynamic_question_submit_new"/>
     </form>
 </template>
 
 <template name="dynamicQuestionNew">
-    <label for="dynamic_question_name_new">Question :- </label>
-    <input type="text" name="dynamic_question_name_new" id="dynamic_question_name_new"> <br><br><br>
-    <label for="dynamic_correct_option_new">Correct Option :- </label>
-    <input type="text" name="dynamic_correct_option_new" id="dynamic_correct_option_new"> <br><br><br>
-    <div id="add_options_new" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Option</div>
-    <br><br>
-    <div id="dynamic_options_block_new"></div>
+    <div class="dq-block" style="border: 1px solid blue;">
+        <label for="dynamic_question_name_new">Question :- </label>
+        <input type="text" name="dynamic_question_name_new" id="dynamic_question_name_new"> <br><br><br>
+        <div id="add_options_new" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Option</div>
+        <br><br>
+        <div id="dynamic_options_block_new"></div>
+
+    </div>
 </template>
 
 <template name="dynamicOptionNew">
-    <div class="dynamic_options">
+    <div class="dynamic_options{{_id}}" style="position: relative">
+        <div id="remove_option_{{id}}_btn" class="remove-opt-btn" style="cursor: pointer; position: absolute; left:25%; top:0; border: 1px solid red;">x</div>
         <label for="dynamic_option_new_val_{{id}}">Value :- </label>
         <input type="text" name="dynamic_option_new_val_{{id}}" id="dynamic_option_new_val_{{id}}">
+        <input type="radio" class="option-class" name="dynamic_option_new_isCorrect_{{id}}" id="dynamic_option_new_isCorrect_{{id}}" value="false">Correct<br>
     </div>
 </template>
 
 <template name="questionBank_new">
     <h1>Question Bank :- {{name}}</h1>
-
+    <input type="hidden" name="show_game_id" value="{{_id}}">
     <div class="question-block">
         {{#each question}}
         <div class="question">
-            {{name}}
+            <span class="qname">{{name}}</span>
             <div class="options-block">
-                <!--{{correct_option}}-->
-                <br>
-                <!--{{#if correctOptionNewIs correct_option1}}-->
-                    <!--{{name}}-->
-                <!--{{/if}}-->
+                <ul>
+                    {{#each options}}
+                        <li class="{{isCorrect}}">
+                            <span class="opt-name">{{val}}</span>
+                            <input type="button" value="X" class="delete" /> <!-- here it is -->
+                        </li>
 
-                {{#each options}}
-                    <!--{{name}}-->
-                    <!--{{#if checkcorrectOptionNewIs correct_option2}}-->
-
-                        <li class="other">{{name}}</li>
-                    <!--{{/if}}-->
-
-                {{/each}}
+                    {{/each}}
+                </ul>
             </div>
         </div>
         {{/each}}
