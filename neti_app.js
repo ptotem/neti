@@ -143,6 +143,10 @@ if (Meteor.isClient) {
         return Games.find().fetch();
     };
 
+    Template.gameConfigForm.qbs = function(){
+        return questionBanks.find().fetch();
+    }
+
     Template.gameConfigForm.events({
         'click #add_config_btn': function(event, template){
             //console.log(dynamicFieldCount);

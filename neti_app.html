@@ -54,11 +54,18 @@
         <br><br>
         <div id="add_config_btn" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Dynamic Field</div>
         <br><br>
-        <div id="dynamic_config_block"></div>
+        <div id="dynamic_config_block" style="border: 1px solid blue; height: 150px; overflow: auto; width:35%"></div>
         <br>
+        <select>
+            {{#each qbs}}
+                <option value="{{_id}}">{{name}}</option>
+            {{/each}}
+        </select>
+        <br><br>
         <input type="submit" id="submit_game_config_btn"/>
     </form>
 </template>
+
 
 <template name="dynamicParameterFields">
     <div class="dynamic_fields">
