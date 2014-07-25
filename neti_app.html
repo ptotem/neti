@@ -4,6 +4,11 @@
 
 <body>
   <!--{{> hello}}-->
+  {{# if currentUser}}
+    {{>games_list}}
+  {{else}}
+    <h4 style="position: relative; bottom: 10px;"> Please Sign in to create a form  :- </h4>
+  {{/if}}
 </body>
 
 <template name="welcome">
@@ -287,3 +292,116 @@
 
 </template>
 <!--New Ends-->
+
+<template name="landingPage">
+
+    <div class="landing-wrapper">
+        <div class="logo-container">
+            <div class="logo-content">
+
+                <div class="logo">
+                    <div class="landing-app-title">{{ getAppName}}</div>
+                    <i class="icon hiero-logo ico-moon-icon-2em landing-logo"></i>
+                </div>
+                <div class="about-text">
+                </div>
+
+            </div>
+        </div>
+        <div class="login-form">
+            <div class="form-main-box">
+                <div class="buttons-row">
+                    <div class="sign-up-button">
+                        <button type="button" class="sign-in ">SIGN IN</button>
+                    </div>
+                    <div class="sign-in-button">
+                        <button type="button" class="sign-up myclass">SIGN UP</button>
+                    </div>
+                </div>
+
+                <!--<div class="sign-in-form-box">-->
+                    <!--{{> signInForm}}-->
+
+                <!--</div>-->
+
+                <div class="sign-up-form-box">
+                    {{>signUpForm}}
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="signInForm">
+    <div class="form-box-2">
+        <form id="login" method="post">
+            <div class="hp-input-container">
+                <input class="hp-form-input hp-form-input-full landing-input " type="email" name="email"
+                       placeholder="Your Email Address">
+            </div>
+            <div class="hp-input-container">
+                <input class="hp-form-input hp-form-input-full landing-input " type="password" name="password"
+                       placeholder="Your Password">
+            </div>
+
+            <div class="form-sign-in-button">
+                <button type="submit">SIGN IN</button>
+            </div>
+        </form>
+
+
+        <p class="or-text">Or</p>
+
+        <div class="fb-icon facebook">
+            <!--<img src="/assets/images/facebook.png" width="100%">-->
+        </div>
+        <div class="for-extra-height"></div>
+    </div>
+</template>
+
+<template name="signUpForm">
+    <div class="form-box-2">
+        <form id="register" method="post">
+            <div class="hp-input-container">
+                <input class="hp-form-input hp-form-input-full landing-input " type="email" name="email"
+                       placeholder="Your Email Address">
+            </div>
+            <div class="hp-input-container">
+                <input class="hp-form-input hp-form-input-full landing-input " type="text" name="username"
+                       placeholder="Create a username">
+            </div>
+            <div class="hp-input-container">
+                <input class="hp-form-input hp-form-input-full landing-input " type="password" name="password"
+                       placeholder="Create a password">
+            </div>
+            <div class="hp-input-container">
+                <input class="hp-form-input landing-input " style="width: 45%;" type="text" name="firstname"
+                       placeholder="First name">
+                <input class="hp-form-input landing-input " style="float: right;width: 45%;" name="lastname"
+                       placeholder="Last name">
+            </div>
+            <div class="form-sign-in-button">
+                <button type="submit">SIGN UP</button>
+            </div>
+        </form>
+
+        <p class="or-text">Or</p>
+
+        <div class="fb-icon-2 facebook">
+            <!--<img src="/assets/images/facebook.png" width="100%">-->
+        </div>
+        <div class="for-extra-height"></div>
+
+    </div>
+
+</template>
+
+
+
+<template name="overlayBody">
+    <div id="displaybox">
+
+    </div>
+</template>

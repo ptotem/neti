@@ -5,6 +5,27 @@ dynamicQuestionBanks = new Meteor.Collection('dynamicQuestionBanks');
 
 
 if (Meteor.isClient) {
+
+//small js function to covert any form to a json objects with keys as 'name' of input field and 'value' as what users enter!
+    $.fn.serializeObject = function () {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function () {
+            if (o[this.name] !== undefined) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
+    $.fn.swapClass = function (a, b) {
+        $(this).removeClass(a).addClass(b)
+    }
+
     var dynamicFieldCount = 0;
     var dynamicOptionCount = 0;
     var dynamicQuestionCount = 0;
@@ -21,7 +42,7 @@ if (Meteor.isClient) {
 
     Meteor.startup(function () {
         Router.map(function(){
-            this.route('welcome', {path: '/'});
+            this.route('signUpForm', {path: '/'});
 
             this.route('new_game',{
                 path: "/games/new",
@@ -187,6 +208,23 @@ if (Meteor.isClient) {
 //        console.log(this._id);
 //    };
 
+
+    Template.signUpForm.events({
+        'submit #register': function(e) {
+            e.preventDefault()
+            var newUser;
+            newUser = $("#register").serializeObject();
+            console.log(newUser)
+            Accounts.createUser(newUser, function(err) {
+                if (err) {
+                    console.log(err);
+                }
+                return Router.go("/games_list");
+            });
+            return false;
+
+        }
+    });
 
     Template.gameConfigForm.events({
         'click #add_config_btn': function(event, template){
