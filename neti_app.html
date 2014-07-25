@@ -41,7 +41,7 @@
     <hr>
     <a href="/game_config/game/{{_id}}">Create Game Config</a>
     <br>
-    <a href="/show_game_config/{{_id}}">Show Game Config</a>
+    <a href="/show_game_config/{{_id}}">Start Game</a>
 </template>
 
 <template name="gameConfigForm">
@@ -51,12 +51,14 @@
         <input type="hidden" name="game_id" value="{{_id}}">
         <label for="no_of_rounds">Number of Rounds :- </label>
         <input type="text" name="no_of_rounds" id="no_of_rounds" value="{{fixedParameter.rounds}}">
+        <label for="time">Time :- </label>
+        <input type="text" name="time" id="time" value="{{fixedParameter.time}}">
         <br><br>
         <div id="add_config_btn" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Dynamic Field</div>
         <br><br>
-        <div id="dynamic_config_block" style="border: 1px solid blue; height: 150px; overflow: auto; width:35%"></div>
+        <div id="dynamic_config_block" style="border: 1px solid blue; height: 150px; overflow: auto; width:35%; display: inline-block"></div>
         <br>
-        <select>
+        <select id="game_qb_select">
             {{#each qbs}}
                 <option value="{{_id}}">{{name}}</option>
             {{/each}}
@@ -77,12 +79,40 @@
 </template>
 
 <template name="showGameConfig">
-    <h1>Game Config :- {{name}}</h1>
-    {{#each dynamicParameter.dynamicFieldArray}}
-    <div class="key_value_pair">
-        <h3>Key :- {{key}}, Value :- {{value}}</h3>
+    <div id="which_game_config_div">
+        <div id="which_game_config">game id :- {{_id}}</div>
+        <h1>Game Config :- {{name}}</h1>
+        <h3>Rounds :- {{fixedParameter.rounds}}</h3>
+        Time :- <span id="timer">{{fixedParameter.time}}</span>
+        {{#each dynamicParameter.dynamicFieldArray}}
+        <div class="key_value_pair">
+            <h3>Key :- {{key}}, Value :- {{value}}</h3>
+        </div>
+        {{/each}}
+        <!--<h4 id="which_qb"> Question Bank :- {{qb_id}}</h4>-->
+        <h4 id="get_my_qb"> Question Bank :- {{qb.name}}</h4>
+
+        <div class="question-block">
+            {{#each qb.questions}}
+            <div class="question">
+                {{name}}
+                <div class="options-block">
+                    correct :- {{correct}}, correct_answer :- {{correct_answer}}
+                    <br>
+                    opta :- {{opta}} <br>
+                    {{#if correctOptionIs "opta"}}
+                        <li class="correct">{{opta}}</li>
+                        <li class="other">{{optb}}</li>
+                        <li class="other">{{optc}}</li>
+                        <li class="other">{{optd}}</li>
+                    {{/if}}
+                </div>
+
+            </div>
+            {{/each}}
+        </div>
+
     </div>
-    {{/each}}
 </template>
 
 <template name="uploadQuestions">
