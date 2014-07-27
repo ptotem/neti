@@ -250,6 +250,7 @@ if (Meteor.isClient) {
         }
     };
 
+
     Template.showGameConfig.events({
         'submit form': function (event, template) {
             //alert(Meteor.Router.page());
@@ -286,10 +287,28 @@ if (Meteor.isClient) {
 //            });
 
             userAnswers.insert({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id, quest_ans:quest_ans_array});
+            Router.go("/games_list");
         },
 
         'click #start_timer': function(event, template){
-            alert("timer started");
+
+
+            var count = 100;
+
+            var counter=setInterval(timer, 1000); //1000 will  run it every 1 second
+
+            function timer()
+            {
+                console.log("count in timer() :- " + count);
+                count=count-1;
+                if (count <= 0)
+                {
+                    clearInterval(counter);
+                    //counter ended, do something here
+                    alert("Game Over");
+                    return;
+                }
+            }
         }
     });
 

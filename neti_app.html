@@ -85,12 +85,11 @@
 
 <template name="showGameConfig">
     <div id="which_game_config_div">
-
         <h1>Game Config :- {{name}}</h1>
         <h3>Rounds :- {{fixedParameter.rounds}}</h3>
-        Time :- <span id="timer">{{fixedParameter.time}}</span>
+        Time :- <div id="timer">{{fixedParameter.time}}</div>
 
-        <div id="start_timer">Start Timer</div>
+        <div id="start_timer" style="display: none">Start Timer</div>
         {{#each dynamicParameter.dynamicFieldArray}}
         <div class="key_value_pair">
             <h3>Key :- {{key}}, Value :- {{value}}</h3>
