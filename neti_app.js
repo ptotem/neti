@@ -285,9 +285,32 @@ if (Meteor.isClient) {
 //            $.each(quest_ans_array, function( index, value ) {
 //                console.log("question :- " + quest_ans_array[index].question + ", answer :- " + quest_ans_array[index].answer);
 //            });
+            var answered = userAnswers.findOne({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id});
+            if (answered==undefined){
+                console.log("create");
+                userAnswers.insert({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id, quest_ans:quest_ans_array});
+            }
+            else{
+                console.log("update");
+                console.log(answered._id);
+//                userAnswers.update( { _id:answered._id, user_id: user_id, game_id:this_game_id, qb_id:this_game_qb_id },
+//                                    { $set: {
+//                                                quest_ans:quest_ans_array
+//                                            }
+//                                    }
+//                                  );
+                  userAnswers.update( { _id:answered._id },
+                                    { $set: {
+                                                quest_ans:quest_ans_array
+                                            }
+                                    }
+                                  );
+            }
 
-            userAnswers.insert({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id, quest_ans:quest_ans_array});
-            Router.go("/games_list");
+
+
+
+            //Router.go("/games_list");
         },
 
         'click #start_timer': function(event, template){
