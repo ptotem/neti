@@ -49,6 +49,11 @@ if (Meteor.isClient) {
                 template: "createNewGame"
             });
 
+//            this.route('timer',{
+//                path: "/timer",
+//                template: "qwerty"
+//            });
+
             this.route('games_list',{
                 path: "/games_list",
                 template: "games_list"
@@ -135,29 +140,87 @@ if (Meteor.isClient) {
     Template.welcome.greeting = function () {
     return "Welcome to neti app.";
   };
+//    Template.overlayBody.greeting1 = function () {
+//        var t=document.getElementById("showtime").innerHtml;
+//        alert(t);
+////        return "Welcome to neti app.";
+//    };
+//    var tim;
+//    var min = 1;
+//    var sec = 60;
+//    var f = new Date();
+//    function f1() {
+//        f2();
+//        document.getElementById("starttime").innerHTML = "Start Time" + f.getHours() + ":" + f.getMinutes();
+//    }
+//    function f2() {
+//        if (parseInt(sec) > 0) {
+//            sec = parseInt(sec) - 1;
+//            document.getElementById("showtime").innerHTML = "Your Left Time  is :"+min+" Minutes ," + sec+" Seconds";
+//            tim = setTimeout("f2()", 1000);
+//        }
+//        else {
+//            if (parseInt(sec) == 0) {
+//                min = parseInt(min) - 1;
+//                if (parseInt(min) == 0) {
+//                    clearTimeout(tim);
+//                    alert('hiii')
+////
+//                }
+//                else {
+//                    sec = 60;
+//                    document.getElementById("showtime").innerHTML = "Your Left Time  is :" + min + " Minutes ," + sec + " Seconds";
+//                    tim = setTimeout("f2()", 1000);
+//                }
+//            }
+//
+//        }
+//    }
 
+    Template.overlayBody.rendered = function(){
+        if (!this.rendered){
+}
+       var t=document.getElementById("showtime").innerHtml;
+        alert(t);
+    };
+
+//    setTimeout(function(){
+//        alert('Hello')},1000);
+//    Template.Timer.events ({
+//        'click #qweas': function(event, template){
+//            setTimeout(function(){
+//                alert('Hello')},1000);
+//            //alert(template.find("input[name=no_of_rounds]").value);
+//            //alert("No. of Games :- " + Games.find().count());
+//            //alert("Last Game :- " + ((Games.find()).skip(Games.find().count() - 1)));
+//        }
+//
+//    })
     Template.createNewGame.events({
         'submit form': function (event, template) {
             //alert(Meteor.Router.page());
             event.preventDefault();
             game_name = template.find("input[name=game_name]");
             no_of_rounds = template.find("input[name=no_of_rounds]");
+            time=template.find("input[name=time]");
             var data = {
                 name: game_name.value
             };
             Games.insert(data, function(err) { /* handle error */ });
 
-//            var data2 = {
-//                name: game_name.value,
-//                gameConfig: {
-//                    fixedParameter: {
-//                        round: no_of_rounds.value
-//                    }
-//                }
-//            };
-            //Games.insert(data2, function(err) { /* handle error */ });
-            //db.games.insert( { name: "Game 05", gameConfig: { fixedParameter:{ round: 2} } } );
-            //Router.go('games_list');
+            var data2 = {
+                name: game_name.value,
+                gameConfig: {
+                    fixedParameter: {
+                        round: no_of_rounds.value,
+                        time_each_round: time.value
+
+                    }
+                }
+            };
+            Games.insert(data2, function(err) { /* handle error */ });
+//            db.games.insert( { name: "Game 05", gameConfig: { fixedParameter:{ round: 2} } } );
+            Router.go('games_list');
             Router.go('welcome');
         },
 
@@ -240,8 +303,7 @@ if (Meteor.isClient) {
             selected_qb_id = $("#game_config_form").find("#game_qb_select option:selected").val();
             console.log("game_id :- " + game_id);
             console.log("selected_qb_id :- " + selected_qb_id);
-
-            no_of_rounds = template.find("input[name=no_of_rounds]");
+             no_of_rounds = template.find("input[name=no_of_rounds]");
             time = template.find("input[name=time]");
             console.log("time :- " + time);
             //console.log(template.find("input[type=text]").length);
@@ -483,7 +545,7 @@ if (Meteor.isClient) {
 
 
 
-            //questionBanks.insert({name:question_bank_name_dynamic, questions:[dynamicOptionArray]})
+            questionBanks.insert({name:question_bank_name_dynamic, questions:[dynamicOptionArray]})
 
         }
 

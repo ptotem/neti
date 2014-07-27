@@ -5,7 +5,7 @@
 <body>
   <!--{{> hello}}-->
   {{# if currentUser}}
-    {{>games_list}}
+    <!-- {{>games_list}} .? -->
   {{else}}
     <h4 style="position: relative; bottom: 10px;"> Please Sign in to create a form  :- </h4>
   {{/if}}
@@ -85,6 +85,16 @@
 
 <template name="showGameConfig">
     <div id="which_game_config_div">
+        <p id="demo"></p>
+        <label>Timer</label>
+        <script>
+            var myVar=setInterval(function(){myTimer()},1000);
+
+            function myTimer() {
+                var d = new Date();
+                document.getElementById("demo").innerHTML = d.toLocaleTimeString();
+            }
+        </script>
         <div id="which_game_config">game id :- {{_id}}</div>
         <h1>Game Config :- {{name}}</h1>
         <h3>Rounds :- {{fixedParameter.rounds}}</h3>
@@ -291,6 +301,7 @@
     </div>
 
 </template>
+
 <!--New Ends-->
 
 <template name="landingPage">
@@ -401,7 +412,44 @@
 
 
 <template name="overlayBody">
-    <div id="displaybox">
+    <!--<p id="demo"></p>-->
 
-    </div>
+    <!--<script>-->
+        <!--var myVar=setInterval(function(){myTimer()},1000);-->
+
+        <!--function myTimer() {-->
+            <!--var d = new Date();-->
+<!--//            document.getElementById("demo").innerHTML = d.getHours();-->
+            <!--document.getElementById("starttime").innerHTML = d.toLocaleTimeString();-->
+            <!--document.getElementById("endtime").innerHTML =   d.getMinutes();;-->
+            <!--document.getElementById("showtime").innerHTML =  d.getSeconds();;-->
+
+
+
+
+        <!--}-->
+    <!--</script>-->
+<!--&lt;!&ndash;<h1>timer</h1>&ndash;&gt;-->
+    <!--<div>-->
+        <!--&lt;!&ndash;{{greeting1}}&ndash;&gt;-->
+        <!--<table width="100%" align="center">-->
+            <!--<tr>-->
+                <!--<td colspan="2">-->
+                    <!--<h2>Timer</h2>-->
+                <!--</td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<td>-->
+                    <!--<div id="starttime"></div>-->
+                    <!--<div id="endtime"></div>-->
+                    <!--<div id="showtime"></div>-->
+                <!--</td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<td>-->
+                <!--</td>-->
+            <!--</tr>-->
+        <!--</table>-->
+    <!--</div>-->
 </template>
+
