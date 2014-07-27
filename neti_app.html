@@ -7,9 +7,11 @@
   {{# if currentUser}}
     <!-- {{>games_list}} .? -->
   {{else}}
-    <h4 style="position: relative; bottom: 10px;"> Please Sign in to create a form  :- </h4>
+    <h4 style="position: relative; bottom: 10px;"> Sign In / Sign Up</h4>
   {{/if}}
+  <!--{{> showGameConfig}}-->
 </body>
+
 
 <template name="welcome">
   <h1>{{greeting}}</h1>
@@ -38,7 +40,7 @@
             <a href="/game/{{_id}}">{{name}}</a>
         </div>
         {{/each}}
-    </div>
+    </div>rl
 </template>
 
 <template name="game">
@@ -84,7 +86,67 @@
 </template>
 
 <template name="showGameConfig">
-    <div id="which_game_config_div">
+    <div  id="which_game_config_div">
+ <!--<head runat="server">-->
+            <!--<title></title>-->
+            <!--<script language ="javascript" >-->
+                <!--var tim;-->
+                <!--var min = 1;-->
+                <!--var sec = 60;-->
+                <!--var f = new Date();-->
+                <!--function f1() {-->
+                    <!--f2();-->
+                    <!--document.getElementById("starttime").innerHTML = "Start Time" + f.getHours() + ":" + f.getMinutes();-->
+                <!--}-->
+                <!--function f2() {-->
+                    <!--if (parseInt(sec) > 0) {-->
+                        <!--sec = parseInt(sec) - 1;-->
+                        <!--document.getElementById("showtime").innerHTML = "Your Left Time  is :"+min+" Minutes ," + sec+" Seconds";-->
+                        <!--tim = setTimeout("f2()", 1000);-->
+                    <!--}-->
+                    <!--else {-->
+                        <!--if (parseInt(sec) == 0) {-->
+                            <!--min = parseInt(min) - 1;-->
+                            <!--if (parseInt(min) == 0) {-->
+                                <!--clearTimeout(tim);-->
+                                <!--alert('hiii')-->
+<!--//-->
+                            <!--}-->
+                            <!--else {-->
+                                <!--sec = 60;-->
+                                <!--document.getElementById("showtime").innerHTML = "Your Left Time  is :" + min + " Minutes ," + sec + " Seconds";-->
+                                <!--tim = setTimeout("f2()", 1000);-->
+                            <!--}-->
+                        <!--}-->
+
+                    <!--}-->
+                <!--}-->
+            <!--</script>-->
+        <!--</head>-->
+        <!--<body onload="f1()" >-->
+        <!--<form id="form1" runat="server">-->
+            <!--<div>-->
+                <!--<table width="100%" align="center">-->
+                    <!--<tr>-->
+                        <!--<td colspan="2">-->
+                            <!--<h2>Timer</h2>-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                        <!--<td>-->
+                            <!--<div id="starttime"></div>-->
+                            <!--<div id="endtime"></div>-->
+                            <!--<div id="showtime"></div>-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                    <!--<tr>-->
+                        <!--<td>-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                <!--</table>-->
+            <!--</div>-->
+        <!--</form>-->
+        <!--</body>-->
         <p id="demo"></p>
         <label>Timer</label>
         <script>
@@ -96,9 +158,11 @@
             }
         </script>
         <div id="which_game_config">game id :- {{_id}}</div>
-        <h1>Game Config :- {{name}}</h1>
+      <h1>Game Config :- {{name}}</h1>
         <h3>Rounds :- {{fixedParameter.rounds}}</h3>
         Time :- <span id="timer">{{fixedParameter.time}}</span>
+
+        <div id="start_timer">Start Timer</div>
         {{#each dynamicParameter.dynamicFieldArray}}
         <div class="key_value_pair">
             <h3>Key :- {{key}}, Value :- {{value}}</h3>
@@ -107,26 +171,43 @@
         <!--<h4 id="which_qb"> Question Bank :- {{qb_id}}</h4>-->
         <h4 id="get_my_qb"> Question Bank :- {{qb.name}}</h4>
 
-        <div class="question-block">
-            {{#each qb.questions}}
-            <div class="question">
-                {{name}}
-                <div class="options-block">
-                    correct :- {{correct}}, correct_answer :- {{correct_answer}}
-                    <br>
-                    opta :- {{opta}} <br>
-                    {{#if correctOptionIs "opta"}}
-                        <li class="correct">{{opta}}</li>
-                        <li class="other">{{optb}}</li>
-                        <li class="other">{{optc}}</li>
-                        <li class="other">{{optd}}</li>
-                    {{/if}}
+        <form id="user_ans_form" method="post">
+            <input type="hidden" id="this_game_id" value="{{_id}}">
+            <input type="hidden" id="this_game_qb_id" value="{{qb_id}}">
+            <div class="question-block">
+                {{#each qb.questions}}
+                <div class="question" id="question_{{key}}">
+                    {{name}}
+                    <div class="options-block">
+                        <!--correct :- {{correct}}, correct_answer :- {{correct_answer}}-->
+                        <!--<br>-->
+
+                        <ul style="list-style: none" class="options-list" id="question_{{key}}_options">
+                            <li>
+                                <input type="radio" class="option-class" name="question_{{key}}_option" value="{{opta}}">
+                                {{opta}}
+                            </li>
+                            <li>
+                                <input type="radio" class="option-class" name="question_{{key}}_option" value="{{optb}}">
+                                {{optb}}
+                            </li>
+                            <li>
+                                <input type="radio" class="option-class" name="question_{{key}}_option" value="{{optc}}">
+                                {{optc}}
+                            </li>
+                            <li>
+                                <input type="radio" class="option-class" name="question_{{key}}_option" value="{{optd}}">
+                                {{optd}}
+                            </li>
+                        </ul>
+
+                    </div>
+
                 </div>
-
+                {{/each}}
             </div>
-            {{/each}}
-        </div>
-
+            <input type="submit" id="submit_user_ans" value="Submit"/>
+        </form>
     </div>
 </template>
 
@@ -321,23 +402,21 @@
         </div>
         <div class="login-form">
             <div class="form-main-box">
-                <div class="buttons-row">
-                    <div class="sign-up-button">
-                        <button type="button" class="sign-in ">SIGN IN</button>
-                    </div>
-                    <div class="sign-in-button">
-                        <button type="button" class="sign-up myclass">SIGN UP</button>
-                    </div>
-                </div>
-
-                <!--<div class="sign-in-form-box">-->
-                    <!--{{> signInForm}}-->
-
+                <!--<div class="buttons-row">-->
+                    <!--<div class="sign-up-button">-->
+                        <!--<button type="button" class="sign-in ">SIGN IN</button>-->
+                    <!--</div>-->
+                    <!--<div class="sign-in-button">-->
+                        <!--<button type="button" class="sign-up myclass">SIGN UP</button>-->
+                    <!--</div>-->
                 <!--</div>-->
 
+                <div class="sign-in-form-box">
+                    {{> signInForm}}
+                </div>
+                <br>OR<br><br>
                 <div class="sign-up-form-box">
                     {{>signUpForm}}
-
                 </div>
 
             </div>
@@ -346,6 +425,7 @@
 </template>
 
 <template name="signInForm">
+    Sign In :-
     <div class="form-box-2">
         <form id="login" method="post">
             <div class="hp-input-container">
@@ -363,16 +443,17 @@
         </form>
 
 
-        <p class="or-text">Or</p>
+        <!--<p class="or-text">Or</p>-->
 
-        <div class="fb-icon facebook">
-            <!--<img src="/assets/images/facebook.png" width="100%">-->
-        </div>
-        <div class="for-extra-height"></div>
+        <!--<div class="fb-icon facebook">-->
+            <!--&lt;!&ndash;<img src="/assets/images/facebook.png" width="100%">&ndash;&gt;-->
+        <!--</div>-->
+        <!--<div class="for-extra-height"></div>-->
     </div>
 </template>
 
 <template name="signUpForm">
+    Sign Up :-
     <div class="form-box-2">
         <form id="register" method="post">
             <div class="hp-input-container">
@@ -398,12 +479,12 @@
             </div>
         </form>
 
-        <p class="or-text">Or</p>
+        <!--<p class="or-text">Or</p>-->
 
-        <div class="fb-icon-2 facebook">
-            <!--<img src="/assets/images/facebook.png" width="100%">-->
-        </div>
-        <div class="for-extra-height"></div>
+        <!--<div class="fb-icon-2 facebook">-->
+            <!--&lt;!&ndash;<img src="/assets/images/facebook.png" width="100%">&ndash;&gt;-->
+        <!--</div>-->
+        <!--<div class="for-extra-height"></div>-->
 
     </div>
 
