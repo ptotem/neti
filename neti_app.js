@@ -2,6 +2,7 @@ Games = new Meteor.Collection('games');
 GameConfigs = new Meteor.Collection('gameConfigs');
 questionBanks = new Meteor.Collection('questionBanks');
 dynamicQuestionBanks = new Meteor.Collection('dynamicQuestionBanks');
+userAnswers = new Meteor.Collection('userAnswers');
 
 
 if (Meteor.isClient) {
@@ -26,6 +27,46 @@ if (Meteor.isClient) {
         $(this).removeClass(a).addClass(b)
     }
 
+    trimInput = function(value) {
+        return value.replace(/^\s*|\s*$/g, '');
+    };
+
+    isNotEmpty = function(value) {
+        if (value && value !== ''){
+            return true;
+        }
+        Session.set('alert', 'Please fill in all required fields.');
+        return false;
+    };
+
+    isEmail = function(value) {
+        var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (filter.test(value)) {
+            return true;
+        }
+        Session.set('alert', 'Please enter a valid email address.');
+        return false;
+    };
+
+    isValidPassword = function(password) {
+        if (password.length < 6) {
+            Session.set('alert', 'Your password should be 6 characters or longer.');
+            return false;
+        }
+        return true;
+    };
+
+    areValidPasswords = function(password, confirm) {
+        if (!isValidPassword(password)) {
+            return false;
+        }
+        if (password !== confirm) {
+            Session.set('alert', 'Your two passwords are not equivalent.');
+            return false;
+        }
+        return true;
+    };
+
     var dynamicFieldCount = 0;
     var dynamicOptionCount = 0;
     var dynamicQuestionCount = 0;
@@ -42,7 +83,7 @@ if (Meteor.isClient) {
 
     Meteor.startup(function () {
         Router.map(function(){
-            this.route('signUpForm', {path: '/'});
+            this.route('landingPage', {path: '/'});
 
             this.route('new_game',{
                 path: "/games/new",
@@ -185,28 +226,72 @@ if (Meteor.isClient) {
             var this_game = Games.findOne({_id:this_game_id});
             var this_game_qb = Games.findOne({_id:this_game_id}).qb_id;
             console.log("this_game_qb :- " + this_game_qb);
-            console.log($("#timer").text());
-            timer();
-            var count;
-            function timer()
-            {
-                count=count-1;
-                if (count <= 0)
-                {
-                    clearInterval(counter);
-                    return;
-                }
 
-                document.getElementById("timer").innerHTML=count + " secs"; // watch for spelling
-            }
+//            var this_qb_questions = questionBanks.findOne({_id:this_game_qb}).questions;
+//            //console.log("this_qb_questions :- " + this_qb_questions[0].name)
+//
+//            var items = this_qb_questions.map(function(doc, index, cursor) {
+//                var i = _.extend(doc, {index: index});
+//                //console.log(i);
+//                return i;
+//            });
+//            console.log("items :- " + items)
+//            return items;
 
             return questionBanks.findOne({_id:this_game_qb});
         }
     };
 
-//    Template.showGameConfig.rendered = function() {
-//        console.log(this._id);
-//    };
+
+    Template.showGameConfig.rendered = function(){
+        if (!this.rendered){
+            $("#start_timer").trigger('click');
+            this.rendered = true;
+        }
+    };
+
+    Template.showGameConfig.events({
+        'submit form': function (event, template) {
+            //alert(Meteor.Router.page());
+            event.preventDefault();
+
+            var each_question = $(event.currentTarget).find('.question-block').find('.question');
+
+            var this_game_id = $(event.currentTarget).find('#this_game_id').val();
+            var this_game_qb_id = $(event.currentTarget).find('#this_game_qb_id').val();
+
+            var question, selected_ans;
+            var quest_ans_array = [];
+            var user_id = Meteor.userId();
+
+            $(each_question).each(function(q_index, qf) {
+                //selected_qb_id = $("#game_config_form").find("#game_qb_select option:selected").val();
+                question = $(qf).attr('id').toString().split("_")[1];
+                //console.log("question :- " + question);
+                selected_ans = $(qf).find('.options-list').find(".option-class:checked").val();
+                if (selected_ans===undefined){
+                    quest_ans_array.push({question:question, answer:""});
+                }
+                else{
+                    quest_ans_array.push({question:question, answer:selected_ans});
+                }
+                //console.log("selected_ans :- " + selected_ans);
+
+            });
+
+
+//            console.log("------ quest_ans_array ------");
+//            $.each(quest_ans_array, function( index, value ) {
+//                console.log("question :- " + quest_ans_array[index].question + ", answer :- " + quest_ans_array[index].answer);
+//            });
+
+            userAnswers.insert({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id, quest_ans:quest_ans_array});
+        },
+
+        'click #start_timer': function(event, template){
+            alert("timer started");
+        }
+    });
 
 
     Template.signUpForm.events({
@@ -219,10 +304,38 @@ if (Meteor.isClient) {
                 if (err) {
                     console.log(err);
                 }
-                return Router.go("/games_list");
+//                return Router.go("/games_list");
+                return Router.go("/");
             });
             return false;
 
+        }
+    });
+
+    Template.signInForm.events({
+        'submit #login': function(e, t) {
+            e.preventDefault();
+
+            var signInForm = $(e.currentTarget),
+                //email = trimInput(signInForm.find('.email').val().toLowerCase()),
+                email = signInForm.find("input[name=email]").val(),
+                //password = signInForm.find('.password').val();
+                password = signInForm.find("input[name=password]").val();
+
+                //console.log("email :- " + email + ", password :- " + password);
+            //if (isNotEmpty(email) && isEmail(email) && isNotEmpty(password) && isValidPassword(password)) {
+                Meteor.loginWithPassword(email, password, function(err) {
+                    if (err) {
+                        Session.set('alert', 'We\'re sorry but these credentials are not valid.');
+                    } else {
+                        console.log("correct");
+                        Router.go("/games_list");
+                        Session.set('alert', 'Welcome back New Meteorite!');
+                    }
+                });
+            //}
+
+            return false;
         }
     });
 
@@ -304,65 +417,65 @@ if (Meteor.isClient) {
             //console.log("questionlist :- " + questionlist);
 
             //NEW STARTING FROM HERE
-            console.log("questionlist len :- " + questionlist.length);
-            //questionlist = JSON.stringify(questionlist);
-            //console.log("after stringify");
-
-            var getKeys = function(arr) {
-
-                for (i=0; i<arr.length; i++) {
-                    for (key in arr[i]) {
-                        keys.push(key);
-                    }
-                }
-                return keys;
-            };
-
-            getKeys(questionlist); // => ["A", "B", "C", "D", "E", "F"]
-            //console.log(getKeys(questionlist));
-
-
-
-            var unique_keys = jQuery.unique(keys);
-            console.log("unique_keys :- " + unique_keys);
-
-            $.each(unique_keys, function( index, value ) {
-                //console.log("value :- " + value);
-                if (value=="name"){
-                    questionKeysArray.push(value)
-                }
-                else{
-                    optionsKeysArray.push(value)
-                }
-            });
-
-            var opt_name, isCorrectVal;
-            $.each(questionlist, function( index, value ) {
-                for(var h=0; h<questionKeysArray.length; h++){
-                    console.log("name :- "+ questionlist[index][questionKeysArray[h]]);
-                    totalQuestArray.push({name:questionlist[index][questionKeysArray[h]]})
-                }
-                for(var v=0; v<optionsKeysArray.length; v++){
-                    //console.log("opt"+(v+1)+ " :- " + questionlist[index][optionsKeysArray[v]]);
-                    opt_name = questionlist[index][optionsKeysArray[v]].split(',')[0];
-                    isCorrectVal = questionlist[index][optionsKeysArray[v]].split(', ')[1];
-                    console.log("opt_name :- " + opt_name + ", isCorrectVal :- " + isCorrectVal);
-                    totalOptsArray.push({options:[{val:opt_name, isCorrect:isCorrectVal}]})
-                }
-            });
-
-            console.log("----totalQuestArray-----");
-            $.each(totalQuestArray, function( index, value ) {
-                console.log("totalQuestArray :- " + value.name);
-            });
-
-            console.log("----totalOptsArray-----");
-            //console.log("totalOptsArray :- " + totalOptsArray[0].options[0].val);
-
-
-            $.each(totalOptsArray, function( index, value ) {
-                console.log(totalOptsArray[index].options);
-            });
+//            console.log("questionlist len :- " + questionlist.length);
+//            //questionlist = JSON.stringify(questionlist);
+//            //console.log("after stringify");
+//
+//            var getKeys = function(arr) {
+//
+//                for (i=0; i<arr.length; i++) {
+//                    for (key in arr[i]) {
+//                        keys.push(key);
+//                    }
+//                }
+//                return keys;
+//            };
+//
+//            getKeys(questionlist); // => ["A", "B", "C", "D", "E", "F"]
+//            //console.log(getKeys(questionlist));
+//
+//
+//
+//            var unique_keys = jQuery.unique(keys);
+//            console.log("unique_keys :- " + unique_keys);
+//
+//            $.each(unique_keys, function( index, value ) {
+//                //console.log("value :- " + value);
+//                if (value=="name"){
+//                    questionKeysArray.push(value)
+//                }
+//                else{
+//                    optionsKeysArray.push(value)
+//                }
+//            });
+//
+//            var opt_name, isCorrectVal;
+//            $.each(questionlist, function( index, value ) {
+//                for(var h=0; h<questionKeysArray.length; h++){
+//                    console.log("name :- "+ questionlist[index][questionKeysArray[h]]);
+//                    totalQuestArray.push({name:questionlist[index][questionKeysArray[h]]})
+//                }
+//                for(var v=0; v<optionsKeysArray.length; v++){
+//                    //console.log("opt"+(v+1)+ " :- " + questionlist[index][optionsKeysArray[v]]);
+//                    opt_name = questionlist[index][optionsKeysArray[v]].split(',')[0];
+//                    isCorrectVal = questionlist[index][optionsKeysArray[v]].split(', ')[1];
+//                    console.log("opt_name :- " + opt_name + ", isCorrectVal :- " + isCorrectVal);
+//                    totalOptsArray.push({options:[{val:opt_name, isCorrect:isCorrectVal}]})
+//                }
+//            });
+//
+//            console.log("----totalQuestArray-----");
+//            $.each(totalQuestArray, function( index, value ) {
+//                console.log("totalQuestArray :- " + value.name);
+//            });
+//
+//            console.log("----totalOptsArray-----");
+//            //console.log("totalOptsArray :- " + totalOptsArray[0].options[0].val);
+//
+//
+//            $.each(totalOptsArray, function( index, value ) {
+//                console.log(totalOptsArray[index].options);
+//            });
 
 
 //            totalQuestOptsArray.push({name:"quest 01", options:[{val:"opt1", isCorrect:"false"}]});
@@ -395,7 +508,7 @@ if (Meteor.isClient) {
 //            });
             //NEW ENDING FROM HERE
 
-            questionBanks.insert({name:question_bank_name,questions:questionlist})
+            questionBanks.insert({name:question_bank_name,questions:questionlist});
 
             //dynamicOptsCombined.push({val:dynamicOptsVal[k].val, isCorrect:dynamicOptsisCorrect[k].isCorrect})
 //            dynamicQuestionBanks.update( { _id: qb_id_new},
