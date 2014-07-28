@@ -26,6 +26,8 @@
     <form id="new_game_form" method="post">
         <label for="game_name">Name</label>
         <input type="text" name="game_name" id="game_name" />
+        <!--<label for="game_name">Field</label>-->
+        <!--<input type="text" name="dyna_name" id="dyna_field" />-->
         <input type="submit" id="new_game_btn"/>
         <!--<br>-->
         <!--<div id="get_game_data_btn">Get Game Data</div>-->
@@ -45,6 +47,8 @@
 
 <template name="game">
     Game :- {{name}}
+    <br>
+    id :- {{_id}}
     <hr>
     <a href="/game_config/game/{{_id}}">Create Game Config</a>
     <br>
@@ -86,67 +90,9 @@
 </template>
 
 <template name="showGameConfig">
-    <div  id="which_game_config_div">
- <!--<head runat="server">-->
-            <!--<title></title>-->
-            <!--<script language ="javascript" >-->
-                <!--var tim;-->
-                <!--var min = 1;-->
-                <!--var sec = 60;-->
-                <!--var f = new Date();-->
-                <!--function f1() {-->
-                    <!--f2();-->
-                    <!--document.getElementById("starttime").innerHTML = "Start Time" + f.getHours() + ":" + f.getMinutes();-->
-                <!--}-->
-                <!--function f2() {-->
-                    <!--if (parseInt(sec) > 0) {-->
-                        <!--sec = parseInt(sec) - 1;-->
-                        <!--document.getElementById("showtime").innerHTML = "Your Left Time  is :"+min+" Minutes ," + sec+" Seconds";-->
-                        <!--tim = setTimeout("f2()", 1000);-->
-                    <!--}-->
-                    <!--else {-->
-                        <!--if (parseInt(sec) == 0) {-->
-                            <!--min = parseInt(min) - 1;-->
-                            <!--if (parseInt(min) == 0) {-->
-                                <!--clearTimeout(tim);-->
-                                <!--alert('hiii')-->
-<!--//-->
-                            <!--}-->
-                            <!--else {-->
-                                <!--sec = 60;-->
-                                <!--document.getElementById("showtime").innerHTML = "Your Left Time  is :" + min + " Minutes ," + sec + " Seconds";-->
-                                <!--tim = setTimeout("f2()", 1000);-->
-                            <!--}-->
-                        <!--}-->
 
-                    <!--}-->
-                <!--}-->
-            <!--</script>-->
-        <!--</head>-->
-        <!--<body onload="f1()" >-->
-        <!--<form id="form1" runat="server">-->
-            <!--<div>-->
-                <!--<table width="100%" align="center">-->
-                    <!--<tr>-->
-                        <!--<td colspan="2">-->
-                            <!--<h2>Timer</h2>-->
-                        <!--</td>-->
-                    <!--</tr>-->
-                    <!--<tr>-->
-                        <!--<td>-->
-                            <!--<div id="starttime"></div>-->
-                            <!--<div id="endtime"></div>-->
-                            <!--<div id="showtime"></div>-->
-                        <!--</td>-->
-                    <!--</tr>-->
-                    <!--<tr>-->
-                        <!--<td>-->
-                        <!--</td>-->
-                    <!--</tr>-->
-                <!--</table>-->
-            <!--</div>-->
-        <!--</form>-->
-        <!--</body>-->
+    <!--<div  id="which_game_config_div">-->
+
         <p id="demo"></p>
         <label>Timer</label>
         <script>
@@ -156,13 +102,23 @@
                 var d = new Date();
                 document.getElementById("demo").innerHTML = d.toLocaleTimeString();
             }
+            function asdf() {
+                var d = new Date();
+                document.getElementById("demo").innerHTML = d.toLocaleTimeString();
+            }
         </script>
         <div id="which_game_config">game id :- {{_id}}</div>
       <h1>Game Config :- {{name}}</h1>
-        <h3>Rounds :- {{fixedParameter.rounds}}</h3>
-        Time :- <span id="timer">{{fixedParameter.time}}</span>
 
-        <div id="start_timer">Start Timer</div>
+    <div id="which_game_config_div">
+        <h1>Game Config :- {{name}}</h1>
+
+        <h3>Rounds :- {{fixedParameter.rounds}}</h3>
+        Time :- <div id="timer" value="">{{fixedParameter.time}}</div>
+        <input type="hidden" value="{{fixedParameter.time}}" name="timedata" id="timedata1">
+        <label type="hidden" id="h" value="{{fixedParameter.time}}"></label>
+
+        <div id="start_timer" style="display: none" onload="asdf()">Start Timer</div>
         {{#each dynamicParameter.dynamicFieldArray}}
         <div class="key_value_pair">
             <h3>Key :- {{key}}, Value :- {{value}}</h3>
@@ -402,14 +358,6 @@
         </div>
         <div class="login-form">
             <div class="form-main-box">
-                <!--<div class="buttons-row">-->
-                    <!--<div class="sign-up-button">-->
-                        <!--<button type="button" class="sign-in ">SIGN IN</button>-->
-                    <!--</div>-->
-                    <!--<div class="sign-in-button">-->
-                        <!--<button type="button" class="sign-up myclass">SIGN UP</button>-->
-                    <!--</div>-->
-                <!--</div>-->
 
                 <div class="sign-in-form-box">
                     {{> signInForm}}
@@ -442,13 +390,6 @@
             </div>
         </form>
 
-
-        <!--<p class="or-text">Or</p>-->
-
-        <!--<div class="fb-icon facebook">-->
-            <!--&lt;!&ndash;<img src="/assets/images/facebook.png" width="100%">&ndash;&gt;-->
-        <!--</div>-->
-        <!--<div class="for-extra-height"></div>-->
     </div>
 </template>
 
@@ -479,13 +420,6 @@
             </div>
         </form>
 
-        <!--<p class="or-text">Or</p>-->
-
-        <!--<div class="fb-icon-2 facebook">-->
-            <!--&lt;!&ndash;<img src="/assets/images/facebook.png" width="100%">&ndash;&gt;-->
-        <!--</div>-->
-        <!--<div class="for-extra-height"></div>-->
-
     </div>
 
 </template>
@@ -493,44 +427,6 @@
 
 
 <template name="overlayBody">
-    <!--<p id="demo"></p>-->
 
-    <!--<script>-->
-        <!--var myVar=setInterval(function(){myTimer()},1000);-->
-
-        <!--function myTimer() {-->
-            <!--var d = new Date();-->
-<!--//            document.getElementById("demo").innerHTML = d.getHours();-->
-            <!--document.getElementById("starttime").innerHTML = d.toLocaleTimeString();-->
-            <!--document.getElementById("endtime").innerHTML =   d.getMinutes();;-->
-            <!--document.getElementById("showtime").innerHTML =  d.getSeconds();;-->
-
-
-
-
-        <!--}-->
-    <!--</script>-->
-<!--&lt;!&ndash;<h1>timer</h1>&ndash;&gt;-->
-    <!--<div>-->
-        <!--&lt;!&ndash;{{greeting1}}&ndash;&gt;-->
-        <!--<table width="100%" align="center">-->
-            <!--<tr>-->
-                <!--<td colspan="2">-->
-                    <!--<h2>Timer</h2>-->
-                <!--</td>-->
-            <!--</tr>-->
-            <!--<tr>-->
-                <!--<td>-->
-                    <!--<div id="starttime"></div>-->
-                    <!--<div id="endtime"></div>-->
-                    <!--<div id="showtime"></div>-->
-                <!--</td>-->
-            <!--</tr>-->
-            <!--<tr>-->
-                <!--<td>-->
-                <!--</td>-->
-            <!--</tr>-->
-        <!--</table>-->
-    <!--</div>-->
 </template>
 
