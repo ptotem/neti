@@ -526,6 +526,8 @@ if (Meteor.isClient) {
                 }
             }
 
+            // Dynamic Field Name in Games Collections
+
                 if(flag==0)
                 {
                     Games.update( { _id: game_id },
@@ -555,7 +557,7 @@ if (Meteor.isClient) {
                 }
             }
 
-// Dynamic Field Name in Games Collections
+
 
 
     });
