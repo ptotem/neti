@@ -181,9 +181,9 @@ if (Meteor.isClient) {
         });
     });
 
-    Template.welcome.greeting = function () {
-        return "Welcome to neti app.";
-    };
+//    Template.welcome.greeting = function () {
+//        return "Welcome to neti app.";
+//    };
 
     Template.overlayBody.rendered = function(){
         if (!this.rendered){
@@ -223,7 +223,7 @@ if (Meteor.isClient) {
 //            Games.insert(data2, function(err) { /* handle error */ });
 //            db.games.insert( { name: "Game 05", gameConfig: { fixedParameter:{ round: 2} } } );
             Router.go('games_list');
-            Router.go('welcome');
+//            Router.go('welcome');
         },
 
         'click #get_game_data_btn': function(event, template){
