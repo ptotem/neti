@@ -84,6 +84,8 @@ if (Meteor.isClient) {
 
     Meteor.startup(function () {
         Router.map(function(){
+            this.route('welcome', {path: '/'});
+            + this.route('signUpForm', {path: '/'});
 // Routes for Create New Game:
             this.route('new_game',{
                 path: "/games/new",
@@ -418,18 +420,18 @@ if (Meteor.isClient) {
 //            console.log("selected_qb_id :- " + selected_qb_id);
             no_of_rounds = template.find("input[name=no_of_rounds]");
             time = template.find("input[name=time]");
-            Games.update( { _id: game_id },
-                { $set: {
-//
-                    qb_id: selected_qb_id,
-//
-                    fixedParameter: {
-                        rounds: no_of_rounds.value,
-                        time: time.value
-                    }
-                }
-                }
-            );
+//            Games.update( { _id: game_id },
+//                { $set: {
+////
+//                    qb_id: selected_qb_id,
+////
+//                    fixedParameter: {
+//                        rounds: no_of_rounds.value,
+//                        time: time.value
+//                    }
+//                }
+//                }
+//            );
             var keyArray=[];
             var valueArray=[];
             var dynamicFieldArray = [];
@@ -462,6 +464,18 @@ if (Meteor.isClient) {
 
                else
                 {
+                    Games.update( { _id: game_id },
+                        { $set: {
+//
+                            qb_id: selected_qb_id,
+//
+                            fixedParameter: {
+                                rounds: no_of_rounds.value,
+                                time: time.value
+                            }
+                        }
+                        }
+                    );
                     for(var i=0 ;i<=keyArray.length;i++)
                     {
                         var fieldname = keyArray[i]
