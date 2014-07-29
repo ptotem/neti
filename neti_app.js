@@ -175,7 +175,12 @@ if (Meteor.isClient) {
                 template: "questionBank_new",
                 data: function() { return dynamicQuestionBanks.findOne(this.params._id); }
             });
-
+            this.route('newLink', {
+                // matches: '/posts/1'
+                path: '/SearchGame',
+                template: "newLink"
+//                data: function() { return dynamicQuestionBanks.findOne(this.params._id); }
+            });
 //            New Ends
 
         });
@@ -185,15 +190,60 @@ if (Meteor.isClient) {
 //        return "Welcome to neti app.";
 //    };
 
-    Template.overlayBody.rendered = function(){
-        if (!this.rendered){
-        }
-        var count = document.getElementById('timedata1').text;
-        alert(count);
-        var t=document.getElementById("showtime").innerHtml;
-        alert(t);
-    };
+//    Template.overlayBody.rendered = function(){
+//        if (!this.rendered){
+//        }
+////        var count = document.getElementById('timedata1').text;
+////        alert(count);
+////        var t=document.getElementById("showtime").innerHtml;
+////        alert(t);
+//    };
 
+//    Template.overlayBody.games = function () {
+//        return Games.findOne().fetch();
+//    };
+    Template.newLink.events({
+        'change input[name=search]':function(event,context) {
+            var this_game_id = $(event.currentTarget).find('#search_id').text();
+            var r=event.target
+//            var url = template.find(".newLink").value;
+//            'change  .textid' : function (e,t) {
+                console.log("change !");
+//                var bar = e.target.value;
+//                Session.set("foo",bar);
+//             var game_key = template.find("input[name=search]");
+//            alert(url)
+//            alert(game_key)
+            console.log(this_game_id)
+//            MyCollection.update(_id, {$set:{text:event.target.value}});
+        }
+//        'keypress input.newLink': function (evt, template) {
+//            if (evt.which === 13) {
+//                var url = template.find(".newLink").value;
+//                console.log('hiiiiiiiiiiii')
+//            console.log(url);
+//
+//                // add to database
+//            }
+//        }
+//        'OnChange #search_id': function (event, template) {
+//            game_key = template.find("input[name=search]");
+//            console.log('hiiiiiiiiiiii')
+//            console.log(game_key);
+
+//            //console.log(dynamicFieldCount);
+//            var counter = 0;
+//            dynamicQuestion = UI.renderWithData(Template.dynamicQuestionNew, {id: dynamicQuestionCount});
+////            for(var i=0; i<counter;i++)
+////            {
+//            UI.insert(dynamicQuestion, $("#dynamic_question_block_new")[0]);
+////            }
+////            counter++;
+//            return dynamicQuestionCount = dynamicQuestionCount + 1;
+////            console.log(counter);
+////            return counter;
+//        }
+    } );
 // For New GameData Entry
 
     Template.createNewGame.events({
@@ -443,6 +493,7 @@ if (Meteor.isClient) {
                 val_field = $(df).find("input[type=text]")[1];
                 key = $(key_field).val();
                 val = $(val_field).val();
+//                console.log(key)
                 keyArray.push(
 
                     key
@@ -453,17 +504,29 @@ if (Meteor.isClient) {
             });
 // Validate Key Value
 
-            var j=1;
-            for(var i=0;i<keyArray.length;i++)
+            var j=0;
+//            var count=0;
+            var flag=0;
+            for(var i=1;i<keyArray.length;i++)
             {
-                if(keyArray[i]==keyArray[j])
+                var str=keyArray[i];
+                var count=0;
+                for(var j=0;j<keyArray.length;j++)
                 {
-                    alert("Enter Different key");
-//                    Router.go('/game_config/game/'+game_id);
+                    if(str==keyArray[j])
+                    {
+                        count=count+1;
+                    }
+                }
+                if(count>1)
+                {
+                    flag=1;
+                    alert("Duplicate Data.")
                     break;
                 }
+            }
 
-               else
+                if(flag==0)
                 {
                     Games.update( { _id: game_id },
                         { $set: {
@@ -490,11 +553,8 @@ if (Meteor.isClient) {
 
                     Router.go('/show_game_config/'+game_id);
                 }
-                }
-                j++;
             }
 
-//     }
 // Dynamic Field Name in Games Collections
 
 
@@ -630,8 +690,6 @@ if (Meteor.isClient) {
         //console.log(this.correct);
         return this.correct === correctOptionIs;
     };
-
-
 
     Template.uploadQuestionsDynamic.events({
         'click #add_options_btn': function(event, template){
