@@ -42,7 +42,7 @@
             <a href="/game/{{_id}}">{{name}}</a>
         </div>
         {{/each}}
-    </div>rl
+    </div>
 </template>
 
 <template name="game">
@@ -67,7 +67,7 @@
         <br><br>
         <div id="add_config_btn" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Dynamic Field</div>
         <br><br>
-        <div id="dynamic_config_block" style="border: 1px solid blue; height: 150px; overflow: auto; width:35%; display: inline-block"></div>
+        <div id="dynamic_config_block" style="height: 150px; overflow: auto; width:100%; display: inline-block"></div>
         <br>
         <select id="game_qb_select">
             {{#each qbs}}
@@ -81,7 +81,8 @@
 
 
 <template name="dynamicParameterFields">
-    <div class="dynamic_fields">
+    <div class="dynamic_fields" style="position: relative; margin-bottom: 10px">
+        <div id="remove_dynamic_field_{{id}}_btn" class="remove-dynamic-field-btn" style="cursor: pointer; position: absolute; top:2px; right:38%;">x</div>
         <label for="dynamic_config_key_{{id}}">Key :- </label>
         <input type="text" name="dynamic_config_key_{{id}}" id="dynamic_config_key_{{id}}">
         <label for="dynamic_config_val_{{id}}">Value :- </label>
@@ -118,7 +119,7 @@
         <input type="hidden" value="{{fixedParameter.time}}" name="timedata" id="timedata1">
         <label type="hidden" id="h" value="{{fixedParameter.time}}"></label>
 
-        <div id="start_timer" style="display: none" onload="asdf()">Start Timer</div>
+        <div id="start_timer" style="display: none">Start Timer</div>
         {{#each dynamicParameter.dynamicFieldArray}}
         <div class="key_value_pair">
             <h3>Key :- {{key}}, Value :- {{value}}</h3>

@@ -81,6 +81,7 @@ if (Meteor.isClient) {
     var totalOptsArray = [];
     var totalQuestOptsArray = [];
     var keysArray = [];
+    var timeOver = false;
 
     Meteor.startup(function () {
         Router.map(function(){
@@ -325,66 +326,75 @@ if (Meteor.isClient) {
     Template.showGameConfig.events({
         'submit form': function (event, template) {
             //alert(Meteor.Router.page());
-            event.preventDefault();
-            var each_question = $(event.currentTarget).find('.question-block').find('.question');
-            var count = document.getElementById('timedata1').value;
-            console.log(count);
-            var this_game_id = $(event.currentTarget).find('#this_game_id').val();
-            var this_game_qb_id = $(event.currentTarget).find('#this_game_qb_id').val();
+            console.log("timeOver :- " + timeOver);
+            if (timeOver == false){
+                event.preventDefault();
+                var each_question = $(event.currentTarget).find('.question-block').find('.question');
+                var count = document.getElementById('timedata1').value;
+                console.log(count);
+                var this_game_id = $(event.currentTarget).find('#this_game_id').val();
+                var this_game_qb_id = $(event.currentTarget).find('#this_game_qb_id').val();
 //            var qw= $(event.currentTarget).find('#this_game_qb_id').val();
-            var question, selected_ans;
-            var quest_ans_array = [];
-            var user_id = Meteor.userId();
-            $(each_question).each(function(q_index, qf) {
-                //selected_qb_id = $("#game_config_form").find("#game_qb_select option:selected").val();
-                question = $(qf).attr('id').toString().split("_")[1];
-                //console.log("question :- " + question);
-                selected_ans = $(qf).find('.options-list').find(".option-class:checked").val();
-                if (selected_ans===undefined){
-                    quest_ans_array.push({question:question, answer:""});
-                }
-                else{
-                    quest_ans_array.push({question:question, answer:selected_ans});
-                }
+                var question, selected_ans;
+                var quest_ans_array = [];
+                var user_id = Meteor.userId();
+                $(each_question).each(function(q_index, qf) {
+                    //selected_qb_id = $("#game_config_form").find("#game_qb_select option:selected").val();
+                    question = $(qf).attr('id').toString().split("_")[1];
+                    //console.log("question :- " + question);
+                    selected_ans = $(qf).find('.options-list').find(".option-class:checked").val();
+                    if (selected_ans===undefined){
+                        quest_ans_array.push({question:question, answer:""});
+                    }
+                    else{
+                        quest_ans_array.push({question:question, answer:selected_ans});
+                    }
 
-            });
+                });
 
 
 //            console.log("------ quest_ans_array ------");
 //            $.each(quest_ans_array, function( index, value ) {
 //                console.log("question :- " + quest_ans_array[index].question + ", answer :- " + quest_ans_array[index].answer);
 //            });
-            var answered = userAnswers.findOne({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id});
-            if (answered==undefined){
-                console.log("create");
-                userAnswers.insert({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id, quest_ans:quest_ans_array});
-            }
-            else{
-                console.log("update");
-                console.log(answered._id);
+                var answered = userAnswers.findOne({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id});
+                if (answered==undefined){
+                    console.log("create");
+                    userAnswers.insert({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id, quest_ans:quest_ans_array});
+                }
+                else{
+                    console.log("update");
+                    console.log(answered._id);
 //                userAnswers.update( { _id:answered._id, user_id: user_id, game_id:this_game_id, qb_id:this_game_qb_id },
 //                                    { $set: {
 //                                                quest_ans:quest_ans_array
 //                                            }
 //                                    }
 //                                  );
-                userAnswers.update( { _id:answered._id },
-                    { $set: {
-                        quest_ans:quest_ans_array
-                    }
-                    }
-                );
+                    userAnswers.update( { _id:answered._id },
+                        { $set: {
+                            quest_ans:quest_ans_array
+                        }
+                        }
+                    );
+                }
+
+
+
+
+                //Router.go("/games_list");
             }
-
-
-
-
-            //Router.go("/games_list");
+            else {
+                event.preventDefault();
+                alert("You can not answer. Time is over");
+            }
         },
 
         'click #start_timer': function(event, template){
-            console.log("on click start tmer");
+            console.log("on click start timer");
             console.log(Session.get("game_id"));
+            console.log($(event.currentTarget));
+
             var Data=Games.findOne({_id :Session.get("game_id")});
 //            console.log(Data);
             var time=Data.fixedParameter.time;
@@ -399,9 +409,15 @@ if (Meteor.isClient) {
                 {
                     clearInterval(counter);
                     //counter ended, do something here
+                    $("#timer").text(count);
+                    var form = template.find("#user_ans_form");
+                    //$(form).find("#submit_user_ans").css({"pointer-events":"none"});
+                    timeOver = true;
                     alert("Game Over");
                     return;
                 }
+                $("#timer").text(count);
+                console.log("timer count :- " + count)
             }
 
         }
@@ -461,6 +477,12 @@ if (Meteor.isClient) {
             dynamicFields = UI.renderWithData(Template.dynamicParameterFields,{id:dynamicFieldCount});
             UI.insert(dynamicFields, $("#dynamic_config_block")[0]);
             return dynamicFieldCount = dynamicFieldCount + 1;
+        },
+
+        'click .remove-dynamic-field-btn': function(event, template){
+            //console.log("remove-dynamic-field-btn clicked");
+            //console.log($(event.currentTarget));
+            $(event.currentTarget).parent().remove();
         },
 
         'submit form': function (event, template) {
