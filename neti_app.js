@@ -84,8 +84,9 @@ if (Meteor.isClient) {
 
     Meteor.startup(function () {
         Router.map(function(){
-            this.route('welcome', {path: '/'});
-            + this.route('signUpForm', {path: '/'});
+            this.route('landingPage', {path: '/'});
+
+
 // Routes for Create New Game:
             this.route('new_game',{
                 path: "/games/new",
