@@ -329,6 +329,7 @@ if (Meteor.isClient) {
                     clearInterval(counter);
                     //counter ended, do something here
                     alert("Game Over");
+                    event.preventDefault();
                     return;
                 }
             }
@@ -398,19 +399,19 @@ if (Meteor.isClient) {
 
             no_of_rounds = template.find("input[name=no_of_rounds]");
             time = template.find("input[name=time]");
-            console.log("time :- " + time);
+            //console.log("time :- " + time);
             //console.log(template.find("input[type=text]").length);
 
-            Games.update( { _id: game_id },
-                { $set: {
-                    qb_id: selected_qb_id,
-                    fixedParameter: {
-                        rounds: no_of_rounds.value,
-                        time: time.value
-                    }
-                }
-                }
-            );
+//            Games.update( { _id: game_id },
+//                { $set: {
+//                    qb_id: selected_qb_id,
+//                    fixedParameter: {
+//                        rounds: no_of_rounds.value,
+//                        time: time.value
+//                    }
+//                }
+//                }
+//            );
 
             var dynamicFieldArray = [];
             var key_field, val_field, key, val;
@@ -421,7 +422,7 @@ if (Meteor.isClient) {
                 key = $(key_field).val();
                 val = $(val_field).val();
 
-                //console.log("key :- " + key + ", val :- " + val);
+                console.log("key :- " + key + ", val :- " + val);
                 dynamicFieldArray.push({
                     key : key,
                     value : val
@@ -432,19 +433,19 @@ if (Meteor.isClient) {
             $.each(dynamicFieldArray, function( index, value ) {
                 console.log("key :- " + dynamicFieldArray[index].key + ", val :- " + dynamicFieldArray[index].value);
             });
-
-            Games.update( { _id: game_id },
-                { $set: {
-                    dynamicParameter: {
-                        dynamicFieldArray: dynamicFieldArray
-                    }
-                }
-                }
-            );
-
-            //var game = Games.findOne(game_id);
 //
-            Router.go('/show_game_config/'+game_id);
+//            Games.update( { _id: game_id },
+//                { $set: {
+//                    dynamicParameter: {
+//                        dynamicFieldArray: dynamicFieldArray
+//                    }
+//                }
+//                }
+//            );
+//
+//            //var game = Games.findOne(game_id);
+////
+//            Router.go('/show_game_config/'+game_id);
         }
     });
 
