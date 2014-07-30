@@ -5,11 +5,13 @@
 <body>
   <!--{{> hello}}-->
   {{# if currentUser}}
-    <!--{{>games_list}}-->
+     <!--{{>games_list}} .?-->
   {{else}}
     <h4 style="position: relative; bottom: 10px;"> Sign In / Sign Up</h4>
   {{/if}}
+  <!--{{> showGameConfig}}-->
 </body>
+
 
 <template name="welcome">
   <h1>{{greeting}}</h1>
@@ -24,6 +26,8 @@
     <form id="new_game_form" method="post">
         <label for="game_name">Name</label>
         <input type="text" name="game_name" id="game_name" />
+        <!--<label for="game_name">Field</label>-->
+        <!--<input type="text" name="dyna_name" id="dyna_field" />-->
         <input type="submit" id="new_game_btn"/>
         <!--<br>-->
         <!--<div id="get_game_data_btn">Get Game Data</div>-->
@@ -43,6 +47,8 @@
 
 <template name="game">
     Game :- {{name}}
+    <br>
+    id :- {{_id}}
     <hr>
     <a href="/game_config/game/{{_id}}">Create Game Config</a>
     <br>
@@ -61,7 +67,7 @@
         <br><br>
         <div id="add_config_btn" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Dynamic Field</div>
         <br><br>
-        <div id="dynamic_config_block" style="border: 1px solid blue; height: 150px; overflow: auto; width:35%; display: inline-block"></div>
+        <div id="dynamic_config_block" style="height: 150px; overflow: auto; width:100%; display: inline-block"></div>
         <br>
         <select id="game_qb_select">
             {{#each qbs}}
@@ -75,7 +81,8 @@
 
 
 <template name="dynamicParameterFields">
-    <div class="dynamic_fields">
+    <div class="dynamic_fields" style="position: relative; margin-bottom: 10px">
+        <div id="remove_dynamic_field_{{id}}_btn" class="remove-dynamic-field-btn" style="cursor: pointer; position: absolute; top:2px; right:38%;">x</div>
         <label for="dynamic_config_key_{{id}}">Key :- </label>
         <input type="text" name="dynamic_config_key_{{id}}" id="dynamic_config_key_{{id}}">
         <label for="dynamic_config_val_{{id}}">Value :- </label>
@@ -84,10 +91,33 @@
 </template>
 
 <template name="showGameConfig">
+
+    <!--<div  id="which_game_config_div">-->
+
+        <p id="demo"></p>
+        <label>Timer</label>
+        <script>
+            var myVar=setInterval(function(){myTimer()},1000);
+
+            function myTimer() {
+                var d = new Date();
+                document.getElementById("demo").innerHTML = d.toLocaleTimeString();
+            }
+            function asdf() {
+                var d = new Date();
+                document.getElementById("demo").innerHTML = d.toLocaleTimeString();
+            }
+        </script>
+        <div id="which_game_config">game id :- {{_id}}</div>
+      <h1>Game Config :- {{name}}</h1>
+
     <div id="which_game_config_div">
         <h1>Game Config :- {{name}}</h1>
+
         <h3>Rounds :- {{fixedParameter.rounds}}</h3>
-        Time :- <div id="timer">{{fixedParameter.time}}</div>
+        Time :- <div id="timer" value="">{{fixedParameter.time}}</div>
+        <input type="hidden" value="{{fixedParameter.time}}" name="timedata" id="timedata1">
+        <label type="hidden" id="h" value="{{fixedParameter.time}}"></label>
 
         <div id="start_timer" style="display: none">Start Timer</div>
         {{#each dynamicParameter.dynamicFieldArray}}
@@ -309,6 +339,7 @@
     </div>
 
 </template>
+
 <!--New Ends-->
 
 <template name="landingPage">
@@ -328,14 +359,6 @@
         </div>
         <div class="login-form">
             <div class="form-main-box">
-                <!--<div class="buttons-row">-->
-                    <!--<div class="sign-up-button">-->
-                        <!--<button type="button" class="sign-in ">SIGN IN</button>-->
-                    <!--</div>-->
-                    <!--<div class="sign-in-button">-->
-                        <!--<button type="button" class="sign-up myclass">SIGN UP</button>-->
-                    <!--</div>-->
-                <!--</div>-->
 
                 <div class="sign-in-form-box">
                     {{> signInForm}}
@@ -368,13 +391,6 @@
             </div>
         </form>
 
-
-        <!--<p class="or-text">Or</p>-->
-
-        <!--<div class="fb-icon facebook">-->
-            <!--&lt;!&ndash;<img src="/assets/images/facebook.png" width="100%">&ndash;&gt;-->
-        <!--</div>-->
-        <!--<div class="for-extra-height"></div>-->
     </div>
 </template>
 
@@ -405,21 +421,16 @@
             </div>
         </form>
 
-        <!--<p class="or-text">Or</p>-->
-
-        <!--<div class="fb-icon-2 facebook">-->
-            <!--&lt;!&ndash;<img src="/assets/images/facebook.png" width="100%">&ndash;&gt;-->
-        <!--</div>-->
-        <!--<div class="for-extra-height"></div>-->
-
     </div>
 
 </template>
 
 
 
-<template name="overlayBody">
-    <div id="displaybox">
+<template name="newLink">
+    Enter Game Name:<input type="text" name="search" id="search_id" class="newlink">
 
-    </div>
 </template>
+
+
+

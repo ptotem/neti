@@ -1,3 +1,4 @@
+
 Games = new Meteor.Collection('games');
 GameConfigs = new Meteor.Collection('gameConfigs');
 questionBanks = new Meteor.Collection('questionBanks');
@@ -80,21 +81,26 @@ if (Meteor.isClient) {
     var totalOptsArray = [];
     var totalQuestOptsArray = [];
     var keysArray = [];
+    var timeOver = false;
 
     Meteor.startup(function () {
         Router.map(function(){
             this.route('landingPage', {path: '/'});
 
+
+// Routes for Create New Game:
             this.route('new_game',{
                 path: "/games/new",
                 template: "createNewGame"
             });
 
+// Routes for Show Game List:
             this.route('games_list',{
                 path: "/games_list",
                 template: "games_list"
             });
 
+//  Routes for Start Game Page:
             this.route('gameShow', {
                 // matches: '/posts/1'
                 path: '/game/:_id',
@@ -102,6 +108,7 @@ if (Meteor.isClient) {
                 data: function() { return Games.findOne(this.params._id); }
             });
 
+// Routes for Game Config Form:
             this.route('gameConfigForm', {
                 // matches: '/posts/1'
                 path: '/game_config/game/:_id',
@@ -112,6 +119,7 @@ if (Meteor.isClient) {
                 }
             });
 
+// Routes for Show Game Config Form:
             this.route('showGameConfig', {
                 // matches: '/posts/1'
                 path: '/show_game_config/:_id',
@@ -122,6 +130,7 @@ if (Meteor.isClient) {
                 }
             });
 
+// Routes for Upload Questions Form:
             this.route('upload_questions',{
                 path: "/upload_questions",
                 template: "uploadQuestions"
@@ -167,15 +176,76 @@ if (Meteor.isClient) {
                 template: "questionBank_new",
                 data: function() { return dynamicQuestionBanks.findOne(this.params._id); }
             });
-
+            this.route('newLink', {
+                // matches: '/posts/1'
+                path: '/SearchGame',
+                template: "newLink"
+//                data: function() { return dynamicQuestionBanks.findOne(this.params._id); }
+            });
 //            New Ends
 
         });
     });
 
-    Template.welcome.greeting = function () {
-    return "Welcome to neti app.";
-  };
+//    Template.welcome.greeting = function () {
+//        return "Welcome to neti app.";
+//    };
+
+//    Template.overlayBody.rendered = function(){
+//        if (!this.rendered){
+//        }
+////        var count = document.getElementById('timedata1').text;
+////        alert(count);
+////        var t=document.getElementById("showtime").innerHtml;
+////        alert(t);
+//    };
+
+//    Template.overlayBody.games = function () {
+//        return Games.findOne().fetch();
+//    };
+    Template.newLink.events({
+        'change input[name=search]':function(event,context) {
+            var this_game_id = $(event.currentTarget).find('#search_id').text();
+            var r=event.target
+//            var url = template.find(".newLink").value;
+//            'change  .textid' : function (e,t) {
+                console.log("change !");
+//                var bar = e.target.value;
+//                Session.set("foo",bar);
+//             var game_key = template.find("input[name=search]");
+//            alert(url)
+//            alert(game_key)
+            console.log(this_game_id)
+//            MyCollection.update(_id, {$set:{text:event.target.value}});
+        }
+//        'keypress input.newLink': function (evt, template) {
+//            if (evt.which === 13) {
+//                var url = template.find(".newLink").value;
+//                console.log('hiiiiiiiiiiii')
+//            console.log(url);
+//
+//                // add to database
+//            }
+//        }
+//        'OnChange #search_id': function (event, template) {
+//            game_key = template.find("input[name=search]");
+//            console.log('hiiiiiiiiiiii')
+//            console.log(game_key);
+
+//            //console.log(dynamicFieldCount);
+//            var counter = 0;
+//            dynamicQuestion = UI.renderWithData(Template.dynamicQuestionNew, {id: dynamicQuestionCount});
+////            for(var i=0; i<counter;i++)
+////            {
+//            UI.insert(dynamicQuestion, $("#dynamic_question_block_new")[0]);
+////            }
+////            counter++;
+//            return dynamicQuestionCount = dynamicQuestionCount + 1;
+////            console.log(counter);
+////            return counter;
+//        }
+    } );
+// For New GameData Entry
 
     Template.createNewGame.events({
         'submit form': function (event, template) {
@@ -183,27 +253,32 @@ if (Meteor.isClient) {
             event.preventDefault();
             game_name = template.find("input[name=game_name]");
             no_of_rounds = template.find("input[name=no_of_rounds]");
+//            time=template.find("input[name=time]");
             var data = {
                 name: game_name.value
+
             };
             Games.insert(data, function(err) { /* handle error */ });
 
 //            var data2 = {
 //                name: game_name.value,
+////                rrp:no_of_rounds.value,
 //                gameConfig: {
 //                    fixedParameter: {
-//                        round: no_of_rounds.value
+//                        round: no_of_rounds.value,
+//                        time_each_round: time.value
+//
 //                    }
 //                }
 //            };
-            //Games.insert(data2, function(err) { /* handle error */ });
-            //db.games.insert( { name: "Game 05", gameConfig: { fixedParameter:{ round: 2} } } );
-            //Router.go('games_list');
-            Router.go('welcome');
+//            Games.insert(data2, function(err) { /* handle error */ });
+//            db.games.insert( { name: "Game 05", gameConfig: { fixedParameter:{ round: 2} } } );
+            Router.go('games_list');
+//            Router.go('welcome');
         },
 
         'click #get_game_data_btn': function(event, template){
-             //alert(template.find("input[name=no_of_rounds]").value);
+            //alert(template.find("input[name=no_of_rounds]").value);
             //alert("No. of Games :- " + Games.find().count());
             //alert("Last Game :- " + ((Games.find()).skip(Games.find().count() - 1)));
         }
@@ -221,29 +296,26 @@ if (Meteor.isClient) {
     Template.showGameConfig.qb = function(){
         var this_game_id = this._id;
         if (this_game_id!=undefined){
-
-            //console.log("this_game_id :- " + this_game_id);
             var this_game = Games.findOne({_id:this_game_id});
             var this_game_qb = Games.findOne({_id:this_game_id}).qb_id;
             console.log("this_game_qb :- " + this_game_qb);
-
-//            var this_qb_questions = questionBanks.findOne({_id:this_game_qb}).questions;
-//            //console.log("this_qb_questions :- " + this_qb_questions[0].name)
-//
-//            var items = this_qb_questions.map(function(doc, index, cursor) {
-//                var i = _.extend(doc, {index: index});
-//                //console.log(i);
-//                return i;
-//            });
-//            console.log("items :- " + items)
-//            return items;
-
             return questionBanks.findOne({_id:this_game_qb});
         }
     };
 
+// Set Session in game
+    Template.game.rendered = function(){
+        console.log(this.data._id);
+        Session.set("game_id",this.data._id)
+        if (!this.rendered){
+            console.log("set session");
+            this.rendered = true;
+        }
+
+    };
 
     Template.showGameConfig.rendered = function(){
+        console.log(Session.get("game_id"));
         if (!this.rendered){
             $("#start_timer").trigger('click');
             this.rendered = true;
@@ -254,85 +326,101 @@ if (Meteor.isClient) {
     Template.showGameConfig.events({
         'submit form': function (event, template) {
             //alert(Meteor.Router.page());
-            event.preventDefault();
+            console.log("timeOver :- " + timeOver);
+            if (timeOver == false){
+                event.preventDefault();
+                var each_question = $(event.currentTarget).find('.question-block').find('.question');
+                var count = document.getElementById('timedata1').value;
+                console.log(count);
+                var this_game_id = $(event.currentTarget).find('#this_game_id').val();
+                var this_game_qb_id = $(event.currentTarget).find('#this_game_qb_id').val();
+//            var qw= $(event.currentTarget).find('#this_game_qb_id').val();
+                var question, selected_ans;
+                var quest_ans_array = [];
+                var user_id = Meteor.userId();
+                $(each_question).each(function(q_index, qf) {
+                    //selected_qb_id = $("#game_config_form").find("#game_qb_select option:selected").val();
+                    question = $(qf).attr('id').toString().split("_")[1];
+                    //console.log("question :- " + question);
+                    selected_ans = $(qf).find('.options-list').find(".option-class:checked").val();
+                    if (selected_ans===undefined){
+                        quest_ans_array.push({question:question, answer:""});
+                    }
+                    else{
+                        quest_ans_array.push({question:question, answer:selected_ans});
+                    }
 
-            var each_question = $(event.currentTarget).find('.question-block').find('.question');
-
-            var this_game_id = $(event.currentTarget).find('#this_game_id').val();
-            var this_game_qb_id = $(event.currentTarget).find('#this_game_qb_id').val();
-
-            var question, selected_ans;
-            var quest_ans_array = [];
-            var user_id = Meteor.userId();
-
-            $(each_question).each(function(q_index, qf) {
-                //selected_qb_id = $("#game_config_form").find("#game_qb_select option:selected").val();
-                question = $(qf).attr('id').toString().split("_")[1];
-                //console.log("question :- " + question);
-                selected_ans = $(qf).find('.options-list').find(".option-class:checked").val();
-                if (selected_ans===undefined){
-                    quest_ans_array.push({question:question, answer:""});
-                }
-                else{
-                    quest_ans_array.push({question:question, answer:selected_ans});
-                }
-                //console.log("selected_ans :- " + selected_ans);
-
-            });
+                });
 
 
 //            console.log("------ quest_ans_array ------");
 //            $.each(quest_ans_array, function( index, value ) {
 //                console.log("question :- " + quest_ans_array[index].question + ", answer :- " + quest_ans_array[index].answer);
 //            });
-            var answered = userAnswers.findOne({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id});
-            if (answered==undefined){
-                console.log("create");
-                userAnswers.insert({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id, quest_ans:quest_ans_array});
-            }
-            else{
-                console.log("update");
-                console.log(answered._id);
+                var answered = userAnswers.findOne({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id});
+                if (answered==undefined){
+                    console.log("create");
+                    userAnswers.insert({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id, quest_ans:quest_ans_array});
+                }
+                else{
+                    console.log("update");
+                    console.log(answered._id);
 //                userAnswers.update( { _id:answered._id, user_id: user_id, game_id:this_game_id, qb_id:this_game_qb_id },
 //                                    { $set: {
 //                                                quest_ans:quest_ans_array
 //                                            }
 //                                    }
 //                                  );
-                  userAnswers.update( { _id:answered._id },
-                                    { $set: {
-                                                quest_ans:quest_ans_array
-                                            }
-                                    }
-                                  );
+                    userAnswers.update( { _id:answered._id },
+                        { $set: {
+                            quest_ans:quest_ans_array
+                        }
+                        }
+                    );
+                }
+
+
+
+
+                //Router.go("/games_list");
             }
-
-
-
-
-            //Router.go("/games_list");
+            else {
+                event.preventDefault();
+                alert("You can not answer. Time is over");
+            }
         },
 
         'click #start_timer': function(event, template){
+            console.log("on click start timer");
+            console.log(Session.get("game_id"));
+            console.log($(event.currentTarget));
 
-
-            var count = 100;
-
+            var Data=Games.findOne({_id :Session.get("game_id")});
+//            console.log(Data);
+            var time=Data.fixedParameter.time;
+            var count = time;
+//            console.log(count);
             var counter=setInterval(timer, 1000); //1000 will  run it every 1 second
-
             function timer()
             {
-                console.log("count in timer() :- " + count);
+                //console.log("count in timer() :- " + count);
                 count=count-1;
                 if (count <= 0)
                 {
                     clearInterval(counter);
                     //counter ended, do something here
+                    $("#timer").text(count);
+                    var form = template.find("#user_ans_form");
+                    //$(form).find("#submit_user_ans").css({"pointer-events":"none"});
+                    timeOver = true;
                     alert("Game Over");
                     event.preventDefault();
                     return;
                 }
+                $("#timer").text(count);
+                console.log("timer count :- " + count)
             }
+
         }
     });
 
@@ -360,27 +448,29 @@ if (Meteor.isClient) {
             e.preventDefault();
 
             var signInForm = $(e.currentTarget),
-                //email = trimInput(signInForm.find('.email').val().toLowerCase()),
+            //email = trimInput(signInForm.find('.email').val().toLowerCase()),
                 email = signInForm.find("input[name=email]").val(),
-                //password = signInForm.find('.password').val();
+            //password = signInForm.find('.password').val();
                 password = signInForm.find("input[name=password]").val();
 
-                //console.log("email :- " + email + ", password :- " + password);
+            //console.log("email :- " + email + ", password :- " + password);
             //if (isNotEmpty(email) && isEmail(email) && isNotEmpty(password) && isValidPassword(password)) {
-                Meteor.loginWithPassword(email, password, function(err) {
-                    if (err) {
-                        Session.set('alert', 'We\'re sorry but these credentials are not valid.');
-                    } else {
-                        console.log("correct");
-                        Router.go("/games_list");
-                        Session.set('alert', 'Welcome back New Meteorite!');
-                    }
-                });
+            Meteor.loginWithPassword(email, password, function(err) {
+                if (err) {
+                    Session.set('alert', 'We\'re sorry but these credentials are not valid.');
+                } else {
+                    console.log("correct");
+                    Router.go("/games_list");
+                    Session.set('alert', 'Welcome back New Meteorite!');
+                }
+            });
             //}
 
             return false;
         }
     });
+
+// Enter data into Game Config
 
     Template.gameConfigForm.events({
         'click #add_config_btn': function(event, template){
@@ -390,28 +480,25 @@ if (Meteor.isClient) {
             return dynamicFieldCount = dynamicFieldCount + 1;
         },
 
+        'click .remove-dynamic-field-btn': function(event, template){
+            //console.log("remove-dynamic-field-btn clicked");
+            //console.log($(event.currentTarget));
+            $(event.currentTarget).parent().remove();
+        },
+
         'submit form': function (event, template) {
             event.preventDefault();
             game_id = template.find("input[name=game_id]").value;
             selected_qb_id = $("#game_config_form").find("#game_qb_select option:selected").val();
-            console.log("game_id :- " + game_id);
-            console.log("selected_qb_id :- " + selected_qb_id);
-
+//            console.log("game_id :- " + game_id);
+//            console.log("selected_qb_id :- " + selected_qb_id);
             no_of_rounds = template.find("input[name=no_of_rounds]");
             time = template.find("input[name=time]");
-            //console.log("time :- " + time);
-            //console.log(template.find("input[type=text]").length);
 
-//            Games.update( { _id: game_id },
-//                { $set: {
-//                    qb_id: selected_qb_id,
-//                    fixedParameter: {
-//                        rounds: no_of_rounds.value,
-//                        time: time.value
-//                    }
-//                }
-//                }
-//            );
+
+
+            var keyArray=[];
+            var valueArray=[];
 
             var dynamicFieldArray = [];
             var key_field, val_field, key, val;
@@ -422,31 +509,88 @@ if (Meteor.isClient) {
                 key = $(key_field).val();
                 val = $(val_field).val();
 
+
                 console.log("key :- " + key + ", val :- " + val);
                 dynamicFieldArray.push({
                     key : key,
                     value : val
                 });
+
+//                console.log(key)
+                keyArray.push(
+
+                    key
+                )
+                valueArray.push(
+                    val
+                )
+
             });
+// Validate Key Value
+
 
             console.log("------ dynamicFieldArray ------");
             $.each(dynamicFieldArray, function( index, value ) {
                 console.log("key :- " + dynamicFieldArray[index].key + ", val :- " + dynamicFieldArray[index].value);
             });
+
+
+
+            var j=0;
+//            var count=0;
+            var flag=0;
+            for(var i=1;i<keyArray.length;i++)
+            {
+                var str=keyArray[i];
+                var count=0;
+                for(var j=0;j<keyArray.length;j++)
+                {
+                    if(str==keyArray[j])
+                    {
+                        count=count+1;
+                    }
+                }
+                if(count>1)
+                {
+                    flag=1;
+                    alert("Duplicate Data.")
+                    break;
+                }
+            }
+
+                if(flag==0)
+                {
+                    Games.update( { _id: game_id },
+                        { $set: {
 //
-//            Games.update( { _id: game_id },
-//                { $set: {
-//                    dynamicParameter: {
-//                        dynamicFieldArray: dynamicFieldArray
-//                    }
-//                }
-//                }
-//            );
+                            qb_id: selected_qb_id,
 //
-//            //var game = Games.findOne(game_id);
-////
-//            Router.go('/show_game_config/'+game_id);
-        }
+                            fixedParameter: {
+                                rounds: no_of_rounds.value,
+                                time: time.value
+                            }
+                        }
+                        }
+                    );
+                    for(var i=0 ;i<=keyArray.length;i++)
+                    {
+                        var fieldname = keyArray[i]
+                        var name = valueArray[i]
+                        var $set = {};
+                        $set[fieldname] = name;
+                        Games.update({ _id: game_id }, { $set: $set });
+                    }
+
+
+
+                    Router.go('/show_game_config/'+game_id);
+                }
+            }
+
+// Dynamic Field Name in Games Collections
+
+
+
     });
 
     Template.uploadQuestions.events({
@@ -458,7 +602,6 @@ if (Meteor.isClient) {
             questionlist = JSON.parse(listOfQuestions);
             //console.log("----------------- parsed JSON -----------------");
             //console.log("questionlist :- " + questionlist);
-
             //NEW STARTING FROM HERE
 //            console.log("questionlist len :- " + questionlist.length);
 //            //questionlist = JSON.stringify(questionlist);
@@ -519,13 +662,10 @@ if (Meteor.isClient) {
 //            $.each(totalOptsArray, function( index, value ) {
 //                console.log(totalOptsArray[index].options);
 //            });
-
-
 //            totalQuestOptsArray.push({name:"quest 01", options:[{val:"opt1", isCorrect:"false"}]});
 //            console.log("totalQuestOptsArray.name :- " + totalQuestOptsArray[0].name);
 //            console.log("totalQuestOptsArray.options :- " + totalQuestOptsArray[0].options[0].val);
 //            console.log("totalQuestOptsArray.options :- " + totalQuestOptsArray[0].options[0].isCorrect);
-
 //            $.each(questionlist, function( index, value ) {
 //                //console.log(getKeys(questionlist));
 //                //console.log("keys :- " + keys);
@@ -584,8 +724,6 @@ if (Meteor.isClient) {
         return this.correct === correctOptionIs;
     };
 
-
-
     Template.uploadQuestionsDynamic.events({
         'click #add_options_btn': function(event, template){
             //console.log(dynamicFieldCount);
@@ -639,7 +777,7 @@ if (Meteor.isClient) {
 
 
 
-            //questionBanks.insert({name:question_bank_name_dynamic, questions:[dynamicOptionArray]})
+            questionBanks.insert({name:question_bank_name_dynamic, questions:[dynamicOptionArray]})
 
         }
 
@@ -810,7 +948,7 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
-  Meteor.startup(function () {
-    // code to run on server at startup
-  });
+    Meteor.startup(function () {
+        // code to run on server at startup
+    });
 }
