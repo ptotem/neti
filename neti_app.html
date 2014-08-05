@@ -16,11 +16,24 @@
 <template name="welcome">
   <h1>{{greeting}}</h1>
   <!--<input type="button" value="Click" />-->
-  {{> games_list}}
+  {{> LandingMainPage}}
   <hr>
-  <a href="/games/new">Create a New Game</a>
+  <!--<a href="/games/new">Create a New Game</a>-->
 </template>
 
+<template name="LandingMainPage">
+    <a href="/games/new/">New Game</a>
+    <br>
+    <a href="/upload_questions_dynamic_new/">New Question Bank</a>
+
+    <!--<div class="dynamic_fields" style="position: relative; margin-bottom: 10px">-->
+        <!--<div id="remove_dynamic_field_{{id}}_btn" class="remove-dynamic-field-btn" style="cursor: pointer; position: absolute; top:2px; right:38%;">x</div>-->
+        <!--<label for="dynamic_config_key_{{id}}">Key :- </label>-->
+        <!--<input type="text" name="dynamic_config_key_{{id}}" id="dynamic_config_key_{{id}}">-->
+        <!--<label for="dynamic_config_val_{{id}}">Value :- </label>-->
+        <!--<input type="text" name="dynamic_config_val_{{id}}" id="dynamic_config_val_{{id}}">-->
+    <!--</div>-->
+</template>
 <template name="createNewGame">
     <h1>Create a New Game</h1>
     <form id="new_game_form" method="post">
@@ -56,6 +69,11 @@
 </template>
 
 <template name="gameConfigForm">
+    <script>
+        function selectMultiple() {
+            document.getElementById("game_qb_select").multiple = true;
+        }
+    </script>
     <h2>Game Config</h2>
     <h3>{{name}}</h3>
     <form id="game_config_form" method="post">
@@ -91,7 +109,13 @@
 </template>
 
 <template name="showGameConfig">
-
+<script type="javascript">
+    function index()
+    {
+        var i=0;
+        return i++;
+    }
+</script>
     <!--<div  id="which_game_config_div">-->
 
         <p id="demo"></p>
@@ -119,7 +143,7 @@
         <input type="hidden" value="{{fixedParameter.time}}" name="timedata" id="timedata1">
         <label type="hidden" id="h" value="{{fixedParameter.time}}"></label>
 
-        <div id="start_timer" style="display: none">Start Timer</div>
+        <div id="start_timer" style="display: none" onclick="index()">Start Timer</div>
         {{#each dynamicParameter.dynamicFieldArray}}
         <div class="key_value_pair">
             <h3>Key :- {{key}}, Value :- {{value}}</h3>
@@ -132,36 +156,76 @@
             <input type="hidden" id="this_game_id" value="{{_id}}">
             <input type="hidden" id="this_game_qb_id" value="{{qb_id}}">
             <div class="question-block">
-                {{#each qb.questions}}
-                <div class="question" id="question_{{key}}">
+                <!--{{#each object_with_index}}-->
+                <!--<p>This is number {{index}}</p>-->
+                <!--{{/each}}-->
+
+                <!--{{qb.questions.correct}}-->
+                <!--{{name}}-->
+                <!--{{#each object_with_index}}-->
+                <!--<p>This is number {{index}}</p>-->
+                <!--{{/each}}-->
+                <!--{{#each qb.questions.unique}}-->
+                {{ # each qb.questions}}
+                <div class="question" id=" {{name}}">
+
                     {{name}}
+
+                    <!--{{name}}-->
+                    <!--{{correct}}-->
+
+                    <!--{{key[0]}}-->
+
+                    <!--{{value[0]}}-->
+                    <!--{{unique}}-->
+                    <!--<p>This is number {{index}}</p>-->
                     <div class="options-block">
+
                         <!--correct :- {{correct}}, correct_answer :- {{correct_answer}}-->
                         <!--<br>-->
+                        <!--<fieldset>-->
+                        <!--{{# each qb.questions.options}}-->
+                            <ul style="list-style: none" class="options-list">
+                                {{# each options}}
+                                <li>
 
-                        <ul style="list-style: none" class="options-list" id="question_{{key}}_options">
-                            <li>
-                                <input type="radio" class="option-class" name="question_{{key}}_option" value="{{opta}}">
-                                {{opta}}
-                            </li>
-                            <li>
-                                <input type="radio" class="option-class" name="question_{{key}}_option" value="{{optb}}">
-                                {{optb}}
-                            </li>
-                            <li>
-                                <input type="radio" class="option-class" name="question_{{key}}_option" value="{{optc}}">
-                                {{optc}}
-                            </li>
-                            <li>
-                                <input type="radio" class="option-class" name="question_{{key}}_option" value="{{optd}}">
-                                {{optd}}
-                            </li>
-                        </ul>
+                                    <input type="radio" class="option-class" name="{{value}}" value="{{key}}"/>
+                                    {{value}}
+
+                                </li>
+                                {{/each}}
+                            </ul>
+                        <!--{{/each}}-->
+                        <!--{{/each}}-->
+                        <!--<ul style="list-style: none" class="options-list" >-->
+                            <!--&lt;!&ndash;<select name="" id="question_{{_id}}_options">&ndash;&gt;-->
+                            <!--<li>-->
+                                <!--<input type="radio" class="option-class" name="{{unique}}" value="opta">-->
+                                <!--{{opta}}-->
+                                <!--&lt;!&ndash;<input type="hidden" value="opta">&ndash;&gt;-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<input type="radio" class="option-class" name="{{unique}}" value="optb">-->
+                                <!--{{optb}}-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<input type="radio" class="option-class" name="{{unique}}" value="optc" >-->
+                                <!--{{optc}}-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<input type="radio" class="option-class" name="{{unique}}" value="optd">-->
+                                <!--{{optd}}-->
+                            <!--</li>-->
+                            <!--&lt;!&ndash;</select>&ndash;&gt;-->
+                        <!--</ul>-->
+                        <!--</fieldset>-->
 
                     </div>
 
                 </div>
                 {{/each}}
+                <!--{{/each}}-->
+                <!--{{/each}}-->
             </div>
             <input type="submit" id="submit_user_ans" value="Submit"/>
         </form>
@@ -239,33 +303,45 @@
 </template>
 
 <template name="uploadQuestionsDynamic">
-    <h1>Upload questions here</h1>
-    <form id="question_upload_dynamic_form" method="post">
-        <label for="question_bank_name">Question Bank Name :- </label>
-        <input type="text" name="question_bank_name_dynamic" id="question_bank_name_dynamic"> <br><br><br>
 
-        <label for="dynamic_question_name">Question :- </label>
-        <input type="text" name="dynamic_question_name" id="dynamic_question_name"> <br><br><br>
+    <h1>Upload questions</h1> <h2 style="color: red">for {{name}}</h2>
+    <form id="form" method="post">
+        <br>
 
-        <label for="dynamic_correct_option_key">Correct Option Key :- </label>
-        <input type="text" name="dynamic_correct_option_key" id="dynamic_correct_option_key"> <br><br><br>
 
-        <div id="add_options_btn" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Options</div>
+        <br>
+        <div id="add_question_btn" style="cursor: pointer;background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Question</div>
         <br><br>
-        <div id="dynamic_option_block"></div>
-        <br>
-
-        <br>
+        <div  class="dynamic_question_block" style="border: solid #ff0000">
+        </div>
         <input type="submit" id="submit_questions_btn_dynamic"/>
-    </form>
+        </form>
 </template>
 
 <template name="dynamicOptions">
-    <div class="dynamic_options">
+    <div class="dynamic_options_{{id}}" id="{{id}}">
         <label for="dynamic_option_key_{{id}}">Key :- </label>
         <input type="text" name="dynamic_config_key_{{id}}" id="dynamic_option_key_{{id}}">
         <label for="dynamic_option_val_{{id}}">Value :- </label>
         <input type="text" name="dynamic_option_val_{{id}}" id="dynamic_option_val_{{id}}">
+    </div>
+</template>
+<template name="dynamicQuestions">
+    <div class="dynamic_question" id="{{id}}">
+        <!--<form id="form" method="post">-->
+            <label for="dynamic_question_name">Question :- </label>
+            <input type="text" name="dynamic_question_name" id="dynamic_question_name"> <br><br><br>
+
+            <label for="dynamic_correct_option_key">Correct Option Key :- </label>
+            <input type="text" name="dynamic_correct_option_key" id="dynamic_correct_option_key"> <br><br><br>
+
+            <div id="add_options_btn" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Options</div>
+            <br><br>
+        <div id="createTextbox" name="{{id}}" class="{{id}}">
+            <br/>
+        </div>
+            <br>
+
     </div>
 </template>
 
@@ -429,6 +505,10 @@
 
 <template name="newLink">
     Enter Game Name:<input type="text" name="search" id="search_id" class="newlink">
+    {{gamesdata}}
+    <input type="button" value="Search" id="searchbtn" name="searchBtn">
+    <br/>
+    <label id="lblname" ></label>
 
 </template>
 

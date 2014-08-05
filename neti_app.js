@@ -67,10 +67,14 @@ if (Meteor.isClient) {
         }
         return true;
     };
+    var i=0;
 
+    var a;
+    var score=0;
     var dynamicFieldCount = 0;
     var dynamicOptionCount = 0;
     var dynamicQuestionCount = 0;
+
     var dynamicOptionCountNew = 0;
     var correct_option1, correct_option2;
     var key, keys = [];
@@ -94,10 +98,18 @@ if (Meteor.isClient) {
                 template: "createNewGame"
             });
 
+//            this.route('Score',{
+//                path: "score",
+//                template: "Score"
+//            });
 // Routes for Show Game List:
             this.route('games_list',{
                 path: "/games_list",
                 template: "games_list"
+            });
+            this.route('LandingMainPage',{
+                path: "/LandingMainPage",
+                template: "LandingMainPage"
             });
 
 //  Routes for Start Game Page:
@@ -148,9 +160,13 @@ if (Meteor.isClient) {
                 data: function() { return questionBanks.findOne(this.params._id); }
             });
 
-            this.route('upload_questions_dynamic',{
-                path: "/upload_questions_dynamic",
-                template: "uploadQuestionsDynamic"
+            this.route('upload_questions_dynamic', {
+                path: '/upload_questions_dynamic/:_id',
+                template: "uploadQuestionsDynamic",
+                data: function () {
+                    //console.log("show_game_config :- " + this.params._id);
+                    return dynamicQuestionBanks.findOne(this.params._id);
+                }
             });
 
 
@@ -182,6 +198,12 @@ if (Meteor.isClient) {
                 template: "newLink"
 //                data: function() { return dynamicQuestionBanks.findOne(this.params._id); }
             });
+            this.route('dynamicQuestionNew', {
+                // matches: '/posts/1'
+                path: '/dynamicQuestionNew',
+                template: "dynamicQuestionNew"
+//                data: function() { return dynamicQuestionBanks.findOne(this.params._id); }
+            });
 //            New Ends
 
         });
@@ -205,18 +227,16 @@ if (Meteor.isClient) {
 //    };
     Template.newLink.events({
         'change input[name=search]':function(event,context) {
-            var this_game_id = $(event.currentTarget).find('#search_id').text();
-            var r=event.target
-//            var url = template.find(".newLink").value;
-//            'change  .textid' : function (e,t) {
-                console.log("change !");
-//                var bar = e.target.value;
-//                Session.set("foo",bar);
-//             var game_key = template.find("input[name=search]");
-//            alert(url)
-//            alert(game_key)
-            console.log(this_game_id)
-//            MyCollection.update(_id, {$set:{text:event.target.value}});
+            a=event.target.value;
+//            console.log(a)
+//            {"name": /.*m.*/}
+            var data=Games.find({name: /.*r.*/}).fetch();
+            document.getElementById("lblname").innerHTML =a;
+//            console.log(data)
+//
+        },
+        'click #searchbtn': function(event, template) {
+//            console.log(a)
         }
 //        'keypress input.newLink': function (evt, template) {
 //            if (evt.which === 13) {
@@ -245,6 +265,16 @@ if (Meteor.isClient) {
 ////            return counter;
 //        }
     } );
+//    Template.newLink.gamesdata = function () {
+//        var data=Games.find({name: /.*r.*/}).fetch();
+//        console.log(a)
+//        return Games.find().fetch();
+//    }
+//    Template.uploadQuestionsDynamic.events({
+        Template.uploadQuestionsDynamic.rendered = function() {
+        $(this.firstNode).removeClass('dynamic_option_block');
+    }
+
 // For New GameData Entry
 
     Template.createNewGame.events({
@@ -290,7 +320,7 @@ if (Meteor.isClient) {
     };
 
     Template.gameConfigForm.qbs = function(){
-        return questionBanks.find().fetch();
+        return dynamicQuestionBanks.find().fetch();
     };
 
     Template.showGameConfig.qb = function(){
@@ -298,14 +328,61 @@ if (Meteor.isClient) {
         if (this_game_id!=undefined){
             var this_game = Games.findOne({_id:this_game_id});
             var this_game_qb = Games.findOne({_id:this_game_id}).qb_id;
-            console.log("this_game_qb :- " + this_game_qb);
-            return questionBanks.findOne({_id:this_game_qb});
+//            console.log("this_game_qb :- " + this_game_qb);
+            var question=dynamicQuestionBanks.findOne({_id:this_game_qb});
+
+//            (# each question.questions)
+
+//            console.log('ssssss')
+//            console.log(question)
+//            for(var i = 0; i=data.length; i++) {
+//                data[i].index = i;
+//            }
+//            return objects;
+            return dynamicQuestionBanks.findOne({_id:this_game_qb});
+
+//            return data
+
         }
+    };
+    Template.showGameConfig.object_with_index = function(){
+//        var objects = Template.showGameConfig.objects();
+        var this_game_id = this._id;
+        console.log(this_game_id)
+        var this_game = Games.findOne({_id:this_game_id});
+        console.log(this_game)
+        var this_game_qb = Games.findOne({_id:this_game_id}).qb_id;
+        console.log(this_game_qb)
+
+        var question=questionBanks.findOne({_id:this_game_qb});
+        console.log(question)
+        console.log(question)
+//        for(var i = 0; i=objects.length; i++) {
+//            objects[i].index = i;
+//        }
+
+//        return objects;
+//        var this_game_id = this._id;
+//        if (this_game_id!=undefined){
+//            var this_game = Games.findOne({_id:this_game_id});
+//            var this_game_qb = Games.findOne({_id:this_game_id}).qb_id;
+////            console.log("this_game_qb :- " + this_game_qb);
+//            var question=questionBanks.findOne({_id:this_game_qb}).questions.name;
+//            console.log(data)
+////            for(var i = 0; i=data.length; i++) {
+////                data[i].index = i;
+////            }
+////            return objects;
+//            return questionBanks.findOne({_id:this_game_qb});
+//
+////            return data
+//
+//        }
     };
 
 // Set Session in game
     Template.game.rendered = function(){
-        console.log(this.data._id);
+//        console.log(this.data._id);
         Session.set("game_id",this.data._id)
         if (!this.rendered){
             console.log("set session");
@@ -313,15 +390,33 @@ if (Meteor.isClient) {
         }
 
     };
+    Template.uploadQuestionsDynamic.rendered = function(){
+        console.log(this.data._id);
+//        Session.set("bank_id",this.data._id)
+        if (!this.rendered){
+//            console.log("set session");
+            this.rendered = true;
+        }
+
+    };
 
     Template.showGameConfig.rendered = function(){
-        console.log(Session.get("game_id"));
+//        console.log(Session.get("game_id"));
         if (!this.rendered){
             $("#start_timer").trigger('click');
             this.rendered = true;
         }
     };
 
+    Template.showGameConfig.object_with_index = function() {
+        var objects = Template.showGameConfig.qb();
+
+        for(var i = 0; i=objects.length; i++) {
+            objects[i].index = i;
+        }
+
+        return objects;
+    }
 
     Template.showGameConfig.events({
         'submit form': function (event, template) {
@@ -330,41 +425,196 @@ if (Meteor.isClient) {
             if (timeOver == false){
                 event.preventDefault();
                 var each_question = $(event.currentTarget).find('.question-block').find('.question');
+//                console.log(each_question)
                 var count = document.getElementById('timedata1').value;
-                console.log(count);
+//                console.log(count);
+                var key=[];
+                var value=[];
+                var coption=[];
                 var this_game_id = $(event.currentTarget).find('#this_game_id').val();
                 var this_game_qb_id = $(event.currentTarget).find('#this_game_qb_id').val();
+//
+//
+//                var Data=Games.findOne({_id :Session.get("game_id")});
+                var correctoption=dynamicQuestionBanks.findOne({_id :this_game_qb_id}).questions;
+//
+                $(correctoption).each(function(q_index, qf) {
+                 var correct_option=correctoption[q_index].correct;
+//                    console.log(correct_option)
+                    coption[q_index]=correct_option;
+               $(correctoption[q_index].options).each(function(o_index,op){
+                        key[o_index]=(correctoption[q_index]).options[o_index].key;
+                        value[o_index]=(correctoption[q_index]).options[o_index].value
+                    });
+
+//                    key[q_index]=correctoption.options[q_index].key;
+//                    value[q_index]=correctoption.options[q_index].value
+
+                });
+//
+//
+//                $(correctoption).each(function(o_index, qf) {
+//                    coption[o_index]=correctoption[o_index].correct;
+////                    console.log(coption)
+////                    console.log('inside')
+//                  });
+
 //            var qw= $(event.currentTarget).find('#this_game_qb_id').val();
+                var qb=[];
+                var opt=[];
+                var Qbdata1=[];
+                var key=[];
+                var value1=[];
+                var name=[];
+                var correct=[];
+                var questionlist1;
                 var question, selected_ans;
                 var quest_ans_array = [];
                 var user_id = Meteor.userId();
                 $(each_question).each(function(q_index, qf) {
                     //selected_qb_id = $("#game_config_form").find("#game_qb_select option:selected").val();
-                    question = $(qf).attr('id').toString().split("_")[1];
-                    //console.log("question :- " + question);
-                    selected_ans = $(qf).find('.options-list').find(".option-class:checked").val();
+                    question=$(qf).attr('id').toString();
+//                    question = $(qf).attr('id').toString().split("_")[1];
+                  selected_ans = $(qf).find('.options-list').find(".option-class:checked").val();
+//                    console.log(selected_ans);
                     if (selected_ans===undefined){
-                        quest_ans_array.push({question:question, answer:""});
+                        quest_ans_array.push({question:question, answer:"null"});
                     }
                     else{
                         quest_ans_array.push({question:question, answer:selected_ans});
+//                        a++;
                     }
 
-                });
+//                    for(var i=0;i<=coption.length;i++)
+//                    {
+//                        if(quest_ans_array[i].answer==coption[1])
+//                        {
+//                            score=score+1;
+//                        }
+//                        else{
+//                            score=score;
+//                        }
+//                    }
+ } );
 
 
 //            console.log("------ quest_ans_array ------");
-//            $.each(quest_ans_array, function( index, value ) {
-//                console.log("question :- " + quest_ans_array[index].question + ", answer :- " + quest_ans_array[index].answer);
-//            });
-                var answered = userAnswers.findOne({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id});
-                if (answered==undefined){
-                    console.log("create");
-                    userAnswers.insert({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id, quest_ans:quest_ans_array});
+            $.each(quest_ans_array, function( index, value ) {
+                if(quest_ans_array[index].answer==coption[index])
+                {
+                    score=score+1;
+//                     console.log(score)
                 }
                 else{
-                    console.log("update");
-                    console.log(answered._id);
+                    score=score;
+                }
+//                console.log("question :- " + quest_ans_array[index].question + ", answer :- " + quest_ans_array[index].answer);
+            });
+
+                var answered = userAnswers.findOne({user_id:user_id, game_id:this_game_id, qb_id:this_game_qb_id});
+
+                var QuestionData=dynamicQuestionBanks.findOne({_id :this_game_qb_id}).questions;
+                console.log(QuestionData)
+//                questionlist1 = JSON.parse(QuestionData);
+//                $.each(QuestionData, function( index, value ) {
+//                    Qbdata1.push(
+//                        {
+//                            name:QuestionData.name
+//                        }
+//                    )
+//
+//                    $.each(QuestionData.questions,function(qindex,value){
+//                        name[qindex]= QuestionData.questions[qindex].name;
+//                         correct[qindex]= QuestionData.questions[qindex].correct;
+//                        var i=0;
+//                    $.each(QuestionData.questions[qindex].opt
+//                        ions,function(oindex,value){
+////                            opt.push(
+////                                {
+//
+//                                    key[i]=QuestionData.questions[qindex].options[oindex].key;
+//                                   value1[i]=QuestionData.questions[qindex].options[oindex].value;
+//                        i++;
+////                                }
+////                            )
+//                       });
+//                        opt.push({
+//                            key:key,
+//                            value:value1
+//
+//                        });
+//
+//
+//                        qb.push({
+//                                options:opt
+//                            }
+//
+//                        );
+////
+//                        qb.push(
+//                            {
+////                                name: QuestionData.questions[qindex].name,
+////                                correct:QuestionData.questions[qindex].correct
+//                            }
+//
+//                        )
+//
+//
+//
+////                        console.log(qb);
+////                        QuestionData.questions[qindex].name;
+////                        QuestionData.questions[qindex].correct;
+////                        console.log(QuestionData.questions[qindex].name);
+////                        console.log(QuestionData.questions[qindex].correct);
+//                    });
+//
+//
+//                    var options=QuestionData.options;
+////                    console.log(name);
+////                    console.log(correct);
+//
+//                });
+//                Qbdata1.push(
+//                    {
+//                        questions:qb
+//                    }
+//                )
+////                console.log('jjjjjjjjjjjjjj')
+//                console.log(Qbdata1);
+////                dynamicQuestionBanks.update( { _id: this._id},
+////                    { $push:
+////                    {
+////                        questions: {
+////                            name:dynamic_question_name,
+////                            correct:dynamic_correct_option_key,
+////                            options: dynamicOptionArray
+////
+////                        }
+////                    }
+////
+////                    },
+////                    { $unset: {
+////
+////                        correct: ""
+////                    }
+////                    },
+////                    { multi: true }
+////                );
+
+                if (answered==undefined){
+                    console.log("create");
+//                    console.log(score);
+                    userAnswers.insert({user_id:user_id,score_user:score, game_id:this_game_id, qb_id:this_game_qb_id, quest_ans:quest_ans_array,
+                        Qbdata:QuestionData
+
+                        });
+
+                }
+                else{
+//                    console.log(score)
+//
+//                    console.log("update");
+//                    console.log(answered._id);
 //                userAnswers.update( { _id:answered._id, user_id: user_id, game_id:this_game_id, qb_id:this_game_qb_id },
 //                                    { $set: {
 //                                                quest_ans:quest_ans_array
@@ -373,7 +623,9 @@ if (Meteor.isClient) {
 //                                  );
                     userAnswers.update( { _id:answered._id },
                         { $set: {
-                            quest_ans:quest_ans_array
+                            quest_ans:quest_ans_array,
+                            score_user:score,
+                            Qbdata: QuestionData
                         }
                         }
                     );
@@ -392,8 +644,8 @@ if (Meteor.isClient) {
 
         'click #start_timer': function(event, template){
             console.log("on click start timer");
-            console.log(Session.get("game_id"));
-            console.log($(event.currentTarget));
+//            console.log(Session.get("game_id"));
+//            console.log($(event.currentTarget));
 
             var Data=Games.findOne({_id :Session.get("game_id")});
 //            console.log(Data);
@@ -421,6 +673,20 @@ if (Meteor.isClient) {
             }
 
         }
+        ,'click #question-block': function(event, template){
+            if(event.checked==true)
+            {
+                event.checked=false;
+//                alert('hello')
+            }
+//            for(var i=0 ; i<=2;i++)
+//            {
+//
+//            }
+
+
+
+        }
     });
 
 
@@ -429,7 +695,7 @@ if (Meteor.isClient) {
             e.preventDefault()
             var newUser;
             newUser = $("#register").serializeObject();
-            console.log(newUser)
+//            console.log(newUser)
             Accounts.createUser(newUser, function(err) {
                 if (err) {
                     console.log(err);
@@ -458,8 +724,8 @@ if (Meteor.isClient) {
                 if (err) {
                     Session.set('alert', 'We\'re sorry but these credentials are not valid.');
                 } else {
-                    console.log("correct");
-                    Router.go("/games_list");
+//                    console.log("correct");
+                    Router.go("/LandingMainPage");
                     Session.set('alert', 'Welcome back New Meteorite!');
                 }
             });
@@ -573,9 +839,9 @@ if (Meteor.isClient) {
                         Games.update({ _id: game_id }, { $set: $set });
                     }
 
+                    Router.go("/LandingMainPage");
 
-
-                    Router.go('/show_game_config/'+game_id);
+//                    Router.go('/show_game_config/'+game_id);
                 }
             }
 
@@ -591,6 +857,8 @@ if (Meteor.isClient) {
             listOfQuestions =  $(event.currentTarget).find("#list_of_questions").val();
             //console.log("textarea val (listOfQuestions) :- " + listOfQuestions);
             questionlist = JSON.parse(listOfQuestions);
+
+            console.log(questionlist)
             //console.log("----------------- parsed JSON -----------------");
             //console.log("questionlist :- " + questionlist);
             //NEW STARTING FROM HERE
@@ -702,6 +970,11 @@ if (Meteor.isClient) {
     Template.question_banks_list.questionBanks = function () {
         return questionBanks.find().fetch();
     };
+    Template.uploadQuestionsDynamic.questionBanksname = function () {
+        return dynamicQuestionBanks.find().fetch();
+        console.log(this.param._id);
+        return dynamicQuestionBanks.findOne().fetch();
+    };
 
     Template.questionBank.correctOptionIs = function (correctOptionIs) {
         //console.log("in correctOptionIs");
@@ -714,24 +987,48 @@ if (Meteor.isClient) {
         //console.log(this.correct);
         return this.correct === correctOptionIs;
     };
-
+var i=0;
     Template.uploadQuestionsDynamic.events({
-        'click #add_options_btn': function(event, template){
-            //console.log(dynamicFieldCount);
-            dynamicOptions = UI.renderWithData(Template.dynamicOptions,{id:dynamicOptionCount});
-            UI.insert(dynamicOptions, $("#dynamic_option_block")[0]);
-            return dynamicOptionCount = dynamicOptionCount + 1;
-        },
 
+        'click #add_options_btn': function(event, template){
+         var $ctrl = $('<input/>').attr({ type: 'text', name:'text'+i, value:'text'}).addClass("text");
+            i++;
+            $(event.currentTarget).parent('.dynamic_question').append($ctrl)+'<br/>';
+//            $("#createTextbox").append($ctrl);
+//            $(this).parent().append('hello');
+//            i++;
+//              return i;
+            //console.log(dynamicFieldCount);
+            //debugger;
+
+//            dynamicOptions = UI.renderWithData(Template.dynamicOptions,{id:dynamicOptionCount});
+
+////            var $container = $("dynamic_option_block");
+////            $container.append('<div id="answerdiv ' + $container.children().length + 1 + '"></div>');
+//
+//
+//            UI.insert(dynamicOptions, $((event.currentTarget).parent('.dynamic_question'))[0]);
+//            return dynamicOptionCount = dynamicOptionCount + 1;
+
+
+//            var $container = $("container");
+//            $container.append('<div id="answerdiv ' + $container.children().length + 1 + '"></div>');
+
+
+
+        },
+        'click #add_question_btn': function(event, template){
+            dynamicQuestion = UI.renderWithData(Template.dynamicQuestions,{id:dynamicQuestionCount});
+            UI.insert(dynamicQuestion, $(".dynamic_question_block")[0]);
+            return dynamicQuestionCount = dynamicQuestionCount + 1;
+        },
+//        dynamic_question_block
         'submit form': function (event, template) {
+            console.log(this._id);
             event.preventDefault();
-            question_bank_name_dynamic = $(event.currentTarget).find("#question_bank_name_dynamic").val();
+            question_bank_name_dynamic = $(event.currentTarget).find("#question_bank_name1").val();
             dynamic_question_name = $(event.currentTarget).find("#dynamic_question_name").val();
             dynamic_correct_option_key = $(event.currentTarget).find("#dynamic_correct_option_key").val();
-            console.log(question_bank_name_dynamic);
-            console.log(dynamic_question_name);
-            console.log(dynamic_correct_option_key);
-
             var dynamicOptionArray = [];
             var key_field, val_field, key, val;
             var questionArray = [];
@@ -743,43 +1040,85 @@ if (Meteor.isClient) {
             };
 
             var jsonVariable = {};
-
+//            dynamicOptionArray.push({name:dynamic_question_name,correct:dynamic_correct_option_key});
             $('.dynamic_options').each(function(df_index, df) {
                 //console.log($(df).find("input[type=text]").length);
                 key_field = $(df).find("input[type=text]")[0];
                 val_field = $(df).find("input[type=text]")[1];
                 key = $(key_field).val();
                 val = $(val_field).val();
-
                 console.log("key :- " + key + ", val :- " + val);
-                //questionHash.push({key: "opt"+key,value : val});
-
+                dynamicOptionArray.push({key: key,value : val});
                 jsonVariable['opt'+ key] = val;
+              });
 
-
-            });
-            console.log("jsonVariable :- " + jsonVariable)
-            console.log("jsonVariable :- " + jsonVariable[0].opta);
-//            console.log("------ dynamicFieldArray ------");
-//            $.each(dynamicOptionArray, function( index, value ) {
+             var flag1=0;
+              console.log("------ dynamicFieldArray ------");
+//            console.log(dynamicOptionArray);
+//            console.log(dynamic_correct_option_key)
+            $.each(dynamicOptionArray, function( index, value ) {
+                if(dynamicOptionArray[index].key==dynamic_correct_option_key)
+                {
+                    flag1=1;
+                }
 //                console.log("key :- " + dynamicOptionArray[index].key + ", val :- " + dynamicOptionArray[index].value);
-//            });
+            });
+            if(flag1==0)
+            {
+                alert('Enter Valid Option');
+            }
+            else
+            {
+
+                dynamicQuestionBanks.update( { _id: this._id},
+                    { $push:
+                    {
+                        questions: {
+                                name:dynamic_question_name,
+                                correct:dynamic_correct_option_key,
+                                options: dynamicOptionArray
+
+                                }
+                         }
+
+                    },
+//                    { $unset: {
+//
+//                        correct: ""
+//                    }
+//                    },
+                    { multi: true }
+                );
+            }
+            Router.go("/LandingMainPage");
+
+//            console.log('ghllllllllll');
+//            console.log(question_bank_name_dynamic);
 
 
 
-
-            questionBanks.insert({name:question_bank_name_dynamic, questions:[dynamicOptionArray]})
+//            questionBanks.insert({name:question_bank_name_dynamic, questions:dynamicOptionArray})
+//            questionBanks.insert({name:question_bank_name_dynamic, questions:{name:dynamic_question_name,correct:dynamic_correct_option_key,options:dynamicOptionArray}})
 
         }
 
-    });
+
+    }
+    );
 
     Template.uploadQuestionsDynamicNew.events({
         'submit form': function (event, template) {
             event.preventDefault();
             question_bank_name_new = $(event.currentTarget).find("#question_bank_name_new").val();
+//            console.log(question_bank_name_new)
             dynamicQuestionBanks.insert({name:question_bank_name_new});
+             var ids=dynamicQuestionBanks.findOne({name:question_bank_name_new})._id;
+            console.log(dynamicQuestionBanks.findOne({name:question_bank_name_new})._id)
+//            Router.go('/upload_questions_dynamic',{id:"876"});
+            window.location="/upload_questions_dynamic/"+ids
+//            Router.go('/show_game_config/'+game_id);
         }
+
     });
 
     Template.showQBNew.events({
@@ -803,7 +1142,7 @@ if (Meteor.isClient) {
             console.log("qb_id_new "  + qb_id_new);
 
             question_name_new = $(event.currentTarget).find("#dynamic_question_name_new").val();
-            console.log("question_name_new :- " + question_name_new);
+//            console.log("question_name_new :- " + question_name_new);
 
             var dynamicOptsVal = [];
             var dynamicOptsisCorrect = [];
@@ -817,7 +1156,7 @@ if (Meteor.isClient) {
             });
 
             $('#dynamic_options_block_new').find("input:radio").each(function(df_radio_index, df_radio){
-                console.log(df_radio_index);
+//                console.log(df_radio_index);
                 this_opt_isCorrect = $(df_radio).val();
                 dynamicOptsisCorrect.push({isCorrect:this_opt_isCorrect});
                 //console.log(dynamicOptsisCorrect[df_radio_index]);
@@ -837,19 +1176,19 @@ if (Meteor.isClient) {
 //
 //            });
 
-            console.log("dynamicOptsVal.length :- " + dynamicOptsVal.length + ", dynamicOptsisCorrect.length :- " + dynamicOptsisCorrect.length);
+//            console.log("dynamicOptsVal.length :- " + dynamicOptsVal.length + ", dynamicOptsisCorrect.length :- " + dynamicOptsisCorrect.length);
 
             for (var k=0; k<dynamicOptsVal.length; k++){
-                console.log("dynamicOptsVal :- " + dynamicOptsVal[k].val);
-                console.log("dynamicOptsisCorrect :- " + dynamicOptsisCorrect[k].isCorrect);
+//                console.log("dynamicOptsVal :- " + dynamicOptsVal[k].val);
+//                console.log("dynamicOptsisCorrect :- " + dynamicOptsisCorrect[k].isCorrect);
 
                 dynamicOptsCombined.push({val:dynamicOptsVal[k].val, isCorrect:dynamicOptsisCorrect[k].isCorrect})
             }
 
-            console.log("dynamicOptsCombined.length :- " + dynamicOptsCombined.length);
+//            console.log("dynamicOptsCombined.length :- " + dynamicOptsCombined.length);
 //
             $.each(dynamicOptsCombined, function( index, value ) {
-                console.log("val :- " + value.val + ", isCorrect :- " + value.isCorrect);
+//                console.log("val :- " + value.val + ", isCorrect :- " + value.isCorrect);
             });
 
 
@@ -900,10 +1239,10 @@ if (Meteor.isClient) {
         'click input.delete': function (event, template) { // <-- here it is
             var opt_to_remove = $(event.currentTarget).prev().text();
             show_qb_id = template.find("input[name=show_game_id]").value;
-            console.log(show_qb_id);
+//            console.log(show_qb_id);
             var quest_name = $(event.currentTarget).parent().parent().parent().prev().text();
-            console.log(quest_name);
-            console.log(opt_to_remove);
+//            console.log(quest_name);
+//            console.log(opt_to_remove);
 
 
             dynamicQuestionBanks.update({ _id: show_qb_id },
