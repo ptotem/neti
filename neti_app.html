@@ -4,21 +4,43 @@
 
 <body>
   <!--{{> hello}}-->
+  {{# if currentUser}}
+     <!--{{>games_list}} .?-->
+  {{else}}
+    <h4 style="position: relative; bottom: 10px;"> Sign In / Sign Up</h4>
+  {{/if}}
+  <!--{{> showGameConfig}}-->
 </body>
+
 
 <template name="welcome">
   <h1>{{greeting}}</h1>
   <!--<input type="button" value="Click" />-->
-  {{> games_list}}
+  {{> LandingMainPage}}
   <hr>
-  <a href="/games/new">Create a New Game</a>
+  <!--<a href="/games/new">Create a New Game</a>-->
 </template>
 
+<template name="LandingMainPage">
+    <a href="/games/new/">New Game</a>
+    <br>
+    <a href="/upload_questions_dynamic_new/">New Question Bank</a>
+
+    <!--<div class="dynamic_fields" style="position: relative; margin-bottom: 10px">-->
+        <!--<div id="remove_dynamic_field_{{id}}_btn" class="remove-dynamic-field-btn" style="cursor: pointer; position: absolute; top:2px; right:38%;">x</div>-->
+        <!--<label for="dynamic_config_key_{{id}}">Key :- </label>-->
+        <!--<input type="text" name="dynamic_config_key_{{id}}" id="dynamic_config_key_{{id}}">-->
+        <!--<label for="dynamic_config_val_{{id}}">Value :- </label>-->
+        <!--<input type="text" name="dynamic_config_val_{{id}}" id="dynamic_config_val_{{id}}">-->
+    <!--</div>-->
+</template>
 <template name="createNewGame">
     <h1>Create a New Game</h1>
     <form id="new_game_form" method="post">
         <label for="game_name">Name</label>
         <input type="text" name="game_name" id="game_name" />
+        <!--<label for="game_name">Field</label>-->
+        <!--<input type="text" name="dyna_name" id="dyna_field" />-->
         <input type="submit" id="new_game_btn"/>
         <!--<br>-->
         <!--<div id="get_game_data_btn">Get Game Data</div>-->
@@ -38,30 +60,47 @@
 
 <template name="game">
     Game :- {{name}}
+    <br>
+    id :- {{_id}}
     <hr>
     <a href="/game_config/game/{{_id}}">Create Game Config</a>
     <br>
-    <a href="/show_game_config/{{_id}}">Show Game Config</a>
+    <a href="/show_game_config/{{_id}}">Start Game</a>
 </template>
 
 <template name="gameConfigForm">
+    <script>
+        function selectMultiple() {
+            document.getElementById("game_qb_select").multiple = true;
+        }
+    </script>
     <h2>Game Config</h2>
     <h3>{{name}}</h3>
     <form id="game_config_form" method="post">
         <input type="hidden" name="game_id" value="{{_id}}">
         <label for="no_of_rounds">Number of Rounds :- </label>
         <input type="text" name="no_of_rounds" id="no_of_rounds" value="{{fixedParameter.rounds}}">
+        <label for="time">Time :- </label>
+        <input type="text" name="time" id="time" value="{{fixedParameter.time}}">
         <br><br>
         <div id="add_config_btn" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Dynamic Field</div>
         <br><br>
-        <div id="dynamic_config_block"></div>
+        <div id="dynamic_config_block" style="height: 150px; overflow: auto; width:100%; display: inline-block"></div>
         <br>
+        <select id="game_qb_select">
+            {{#each qbs}}
+                <option value="{{_id}}">{{name}}</option>
+            {{/each}}
+        </select>
+        <br><br>
         <input type="submit" id="submit_game_config_btn"/>
     </form>
 </template>
 
+
 <template name="dynamicParameterFields">
-    <div class="dynamic_fields">
+    <div class="dynamic_fields" style="position: relative; margin-bottom: 10px">
+        <div id="remove_dynamic_field_{{id}}_btn" class="remove-dynamic-field-btn" style="cursor: pointer; position: absolute; top:2px; right:38%;">x</div>
         <label for="dynamic_config_key_{{id}}">Key :- </label>
         <input type="text" name="dynamic_config_key_{{id}}" id="dynamic_config_key_{{id}}">
         <label for="dynamic_config_val_{{id}}">Value :- </label>
@@ -70,10 +109,396 @@
 </template>
 
 <template name="showGameConfig">
-    <h1>Game Config :- {{name}}</h1>
-    {{#each dynamicParameter.dynamicFieldArray}}
-    <div class="key_value_pair">
-        <h3>Key :- {{key}}, Value :- {{value}}</h3>
+<script type="javascript">
+    function index()
+    {
+        var i=0;
+        return i++;
+    }
+</script>
+    <!--<div  id="which_game_config_div">-->
+
+        <p id="demo"></p>
+        <label>Timer</label>
+        <script>
+            var myVar=setInterval(function(){myTimer()},1000);
+
+            function myTimer() {
+                var d = new Date();
+                document.getElementById("demo").innerHTML = d.toLocaleTimeString();
+            }
+            function asdf() {
+                var d = new Date();
+                document.getElementById("demo").innerHTML = d.toLocaleTimeString();
+            }
+        </script>
+        <div id="which_game_config">game id :- {{_id}}</div>
+      <h1>Game Config :- {{name}}</h1>
+
+    <div id="which_game_config_div">
+        <h1>Game Config :- {{name}}</h1>
+
+        <h3>Rounds :- {{fixedParameter.rounds}}</h3>
+        Time :- <div id="timer" value="">{{fixedParameter.time}}</div>
+        <input type="hidden" value="{{fixedParameter.time}}" name="timedata" id="timedata1">
+        <label type="hidden" id="h" value="{{fixedParameter.time}}"></label>
+
+        <div id="start_timer" style="display: none" onclick="index()">Start Timer</div>
+        {{#each dynamicParameter.dynamicFieldArray}}
+        <div class="key_value_pair">
+            <h3>Key :- {{key}}, Value :- {{value}}</h3>
+        </div>
+        {{/each}}
+        <!--<h4 id="which_qb"> Question Bank :- {{qb_id}}</h4>-->
+        <h4 id="get_my_qb"> Question Bank :- {{qb.name}}</h4>
+
+        <form id="user_ans_form" method="post">
+            <input type="hidden" id="this_game_id" value="{{_id}}">
+            <input type="hidden" id="this_game_qb_id" value="{{qb_id}}">
+            <div class="question-block">
+                <!--{{#each object_with_index}}-->
+                <!--<p>This is number {{index}}</p>-->
+                <!--{{/each}}-->
+
+                <!--{{qb.questions.correct}}-->
+                <!--{{name}}-->
+                <!--{{#each object_with_index}}-->
+                <!--<p>This is number {{index}}</p>-->
+                <!--{{/each}}-->
+                <!--{{#each qb.questions.unique}}-->
+                {{ # each qb.questions}}
+                <div class="question" id=" {{name}}">
+
+                    {{name}}
+
+                    <!--{{name}}-->
+                    <!--{{correct}}-->
+
+                    <!--{{key[0]}}-->
+
+                    <!--{{value[0]}}-->
+                    <!--{{unique}}-->
+                    <!--<p>This is number {{index}}</p>-->
+                    <div class="options-block">
+
+                        <!--correct :- {{correct}}, correct_answer :- {{correct_answer}}-->
+                        <!--<br>-->
+                        <!--<fieldset>-->
+                        <!--{{# each qb.questions.options}}-->
+                            <ul style="list-style: none" class="options-list">
+                                {{# each options}}
+                                <li>
+
+                                    <input type="radio" class="option-class" name="{{value}}" value="{{key}}"/>
+                                    {{value}}
+
+                                </li>
+                                {{/each}}
+                            </ul>
+                        <!--{{/each}}-->
+                        <!--{{/each}}-->
+                        <!--<ul style="list-style: none" class="options-list" >-->
+                            <!--&lt;!&ndash;<select name="" id="question_{{_id}}_options">&ndash;&gt;-->
+                            <!--<li>-->
+                                <!--<input type="radio" class="option-class" name="{{unique}}" value="opta">-->
+                                <!--{{opta}}-->
+                                <!--&lt;!&ndash;<input type="hidden" value="opta">&ndash;&gt;-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<input type="radio" class="option-class" name="{{unique}}" value="optb">-->
+                                <!--{{optb}}-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<input type="radio" class="option-class" name="{{unique}}" value="optc" >-->
+                                <!--{{optc}}-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<input type="radio" class="option-class" name="{{unique}}" value="optd">-->
+                                <!--{{optd}}-->
+                            <!--</li>-->
+                            <!--&lt;!&ndash;</select>&ndash;&gt;-->
+                        <!--</ul>-->
+                        <!--</fieldset>-->
+
+                    </div>
+
+                </div>
+                {{/each}}
+                <!--{{/each}}-->
+                <!--{{/each}}-->
+            </div>
+            <input type="submit" id="submit_user_ans" value="Submit"/>
+        </form>
     </div>
-    {{/each}}
 </template>
+
+<template name="uploadQuestions">
+    <h1>Upload questions here</h1>
+    <form id="question_upload_form" method="post">
+        <label for="question_bank_name">Question Bank Name :- </label>
+        <input type="text" name="question_bank_name" id="question_bank_name"> <br><br><br>
+        <label for="list_of_questions">List of questions :- </label> <br>
+        <textarea name="list_of_questions" id="list_of_questions" cols=60 rows=10></textarea>
+        <br>
+        <input type="submit" id="submit_questions_btn"/>
+    </form>
+</template>
+
+<template name="question_banks_list">
+    List of Question Bank :- <br>
+    <div class="qb-block">
+        {{#each questionBanks}}
+        <div id="qb_{{_id}}" class="question-bank">
+            <a href="/question_bank/{{_id}}">{{name}}</a>
+        </div>
+        {{/each}}
+    </div>
+</template>
+
+<template name="questionBank">
+    <h1>Question Bank :- {{name}}</h1>
+
+    <div class="question-block">
+        {{#each questions}}
+        <div class="question">
+            {{name}}
+            <div class="options-block">
+                {{correct}}, {{correct_answer}}
+                <ul>
+
+                    {{#if correctOptionIs "opta"}}
+                        <li class="correct">{{opta}}</li>
+                        <li class="other">{{optb}}</li>
+                        <li class="other">{{optc}}</li>
+                        <li class="other">{{optd}}</li>
+                    {{/if}}
+
+                    {{#if correctOptionIs "optb"}}
+                        <li class="other">{{opta}}</li>
+                        <li class="correct">{{optb}}</li>
+                        <li class="other">{{optc}}</li>
+                        <li class="other">{{optd}}</li>
+                    {{/if}}
+
+                    {{#if correctOptionIs "optc"}}
+                        <li class="other">{{opta}}</li>
+                        <li class="other">{{optb}}</li>
+                        <li class="correct">{{optc}}</li>
+                        <li class="other">{{optd}}</li>
+                    {{/if}}
+
+                    {{#if correctOptionIs "optd"}}
+                        <li class="other">{{opta}}</li>
+                        <li class="other">{{optb}}</li>
+                        <li class="other">{{optc}}</li>
+                        <li class="correct">{{optd}}</li>
+                    {{/if}}
+
+                </ul>
+            </div>
+
+        </div>
+        {{/each}}
+    </div>
+</template>
+
+<template name="uploadQuestionsDynamic">
+
+    <h1>Upload questions</h1> <h2 style="color: red">for {{name}}</h2>
+    <form id="form" method="post">
+        <br>
+
+
+        <br>
+        <div id="add_question_btn" style="cursor: pointer;background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Question</div>
+        <br><br>
+        <div  class="dynamic_question_block" style="border: solid #ff0000">
+        </div>
+        <input type="submit" id="submit_questions_btn_dynamic"/>
+        </form>
+</template>
+
+<template name="dynamicOptions">
+    <div class="dynamic_options_{{id}}" id="{{id}}">
+        <label for="dynamic_option_key_{{id}}">Key :- </label>
+        <input type="text" name="dynamic_config_key_{{id}}" id="dynamic_option_key_{{id}}">
+        <label for="dynamic_option_val_{{id}}">Value :- </label>
+        <input type="text" name="dynamic_option_val_{{id}}" id="dynamic_option_val_{{id}}">
+    </div>
+</template>
+<template name="dynamicQuestions">
+    <div class="dynamic_question" id="{{id}}">
+        <!--<form id="form" method="post">-->
+            <label for="dynamic_question_name">Question :- </label>
+            <input type="text" name="dynamic_question_name" id="dynamic_question_name"> <br><br><br>
+
+            <label for="dynamic_correct_option_key">Correct Option Key :- </label>
+            <input type="text" name="dynamic_correct_option_key" id="dynamic_correct_option_key"> <br><br><br>
+
+            <div id="add_options_btn" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Options</div>
+            <br><br>
+        <div id="createTextbox" name="{{id}}" class="{{id}}">
+            <br/>
+        </div>
+            <br>
+
+    </div>
+</template>
+
+<!--New Starts-->
+<template name="uploadQuestionsDynamicNew">
+    <h1>New Question Bank</h1>
+    <form id="question_upload_dynamic_form_new" method="post">
+        <label for="question_bank_name_new">Question Bank Name :- </label>
+        <input type="text" name="question_bank_name_new" id="question_bank_name_new"> <br><br><br>
+        <input type="submit" id="submit_questions_btn_dynamic_new"/>
+    </form>
+</template>
+
+<template name="showQBNew">
+    <h1>QB Name :- {{name}}</h1>
+    <form id="qb_new_form" method="post">
+        <input type="hidden" name="qb_id_new" value="{{_id}}">
+        <div id="add_question_new" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Question</div>
+        <br><br>
+        <div id="dynamic_question_block_new" style="border: 1px solid red"></div>
+        <!--<div id="dynamic_options_block_new" style="border: 1px solid blueviolet"></div>-->
+        <div id="dyna_option"></div>
+        <br>
+        <!--<div id="dynamic_options_block_new1"></div>-->
+
+        <input type="submit" id="dynamic_question_submit_new"/>
+    </form>
+</template>
+
+<template name="dynamicQuestionNew">
+    <div class="dq-block" style="border: 1px solid blue;">
+        <label for="dynamic_question_name_new">Question :- </label>
+        <input type="text" name="dynamic_question_name_new" id="dynamic_question_name_new"> <br><br><br>
+        <div id="add_options_new" style="cursor: pointer; background-color: #000000; color: white; width:12%; display: inline-block; text-align: center">Add Option</div>
+        <br><br>
+        <div id="dynamic_options_block_new"></div>
+
+    </div>
+</template>
+
+<template name="dynamicOptionNew">
+    <div class="dynamic_options{{_id}}" style="position: relative">
+        <div id="remove_option_{{id}}_btn" class="remove-opt-btn" style="cursor: pointer; position: absolute; left:25%; top:0; border: 1px solid red;">x</div>
+        <label for="dynamic_option_new_val_{{id}}">Value :- </label>
+        <input type="text" name="dynamic_option_new_val_{{id}}" id="dynamic_option_new_val_{{id}}">
+        <input type="radio" class="option-class" name="dynamic_option_new_isCorrect_{{id}}" id="dynamic_option_new_isCorrect_{{id}}" value="false">Correct<br>
+    </div>
+</template>
+
+<template name="questionBank_new">
+    <h1>Question Bank :- {{name}}</h1>
+    <input type="hidden" name="show_game_id" value="{{_id}}">
+    <div class="question-block">
+        {{#each question}}
+        <div class="question">
+            <span class="qname">{{name}}</span>
+            <div class="options-block">
+                <ul>
+                    {{#each options}}
+                        <li class="{{isCorrect}}">
+                            <span class="opt-name">{{val}}</span>
+                            <input type="button" value="X" class="delete" /> <!-- here it is -->
+                        </li>
+
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+        {{/each}}
+
+    </div>
+
+</template>
+
+<!--New Ends-->
+
+<template name="landingPage">
+
+    <div class="landing-wrapper">
+        <div class="login-form">
+            <div class="form-main-box">
+                <div class="sign-in-form-box">
+                    {{> signInForm}}
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="signInForm">
+    <div class="signIn">
+        Sign In :-
+        <div class="form-box-2">
+            <form id="login" method="post">
+                <div class="hp-input-container">
+                    <input class="hp-form-input hp-form-input-full landing-input " type="email" name="email"
+                           placeholder="Your Email Address">
+                </div>
+                <div class="hp-input-container">
+                    <input class="hp-form-input hp-form-input-full landing-input " type="password" name="password"
+                           placeholder="Your Password">
+                </div>
+
+                <div class="form-sign-in-button">
+                    <button type="submit">SIGN IN</button>
+                    <button type="button" class="sign-up">SIGN UP</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</template>
+
+<template name="signUpForm">
+    <div class="signUp">
+        Sign Up :-
+        <div class="form-box-2">
+            <form id="register" method="post">
+                <div class="hp-input-container">
+                    <input class="hp-form-input hp-form-input-full landing-input " type="email" name="email"
+                           placeholder="Your Email Address">
+                </div>
+                <div class="hp-input-container">
+                    <input class="hp-form-input hp-form-input-full landing-input " type="text" name="username"
+                           placeholder="Create a username">
+                </div>
+                <div class="hp-input-container">
+                    <input class="hp-form-input hp-form-input-full landing-input " type="password" name="password"
+                           placeholder="Create a password">
+                </div>
+                <div class="hp-input-container">
+                    <input class="hp-form-input landing-input " style="width: 45%;" type="text" name="firstname"
+                           placeholder="First name">
+                    <input class="hp-form-input landing-input " style="float: right;width: 45%;" name="lastname"
+                           placeholder="Last name">
+                </div>
+                <div class="form-sign-in-button">
+                    <button type="submit">SIGN UP</button>
+                    <button type="button" class="sign-in">SIGN IN</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+</template>
+
+
+
+<template name="newLink">
+    Enter Game Name:<input type="text" name="search" id="search_id" class="newlink">
+    {{gamesdata}}
+    <input type="button" value="Search" id="searchbtn" name="searchBtn">
+    <br/>
+    <label id="lblname" ></label>
+
+</template>
+
+
+
